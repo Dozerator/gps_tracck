@@ -1,0 +1,3 @@
+com.example.operator.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

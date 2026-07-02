@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Панель оператора — отслеживание</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial, sans-serif; }
+  #map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; }
+
+  #status {
+    position: absolute; top: 12px; left: 12px; z-index: 500;
+    background: rgba(20, 20, 20, 0.85); color: #fff; padding: 6px 12px;
+    border-radius: 6px; font-size: 13px; display: flex; align-items: center; gap: 8px;
+  }
+  #status .dot { width: 10px; height: 10px; border-radius: 50%; background: #e74c3c; }
+  #status.connected .dot { background: #2ecc71; }
+
+  #toggle-sidebar {
+    position: absolute; top: 12px; right: 12px; z-index: 500;
+    background: #fff; border: none; border-radius: 6px; padding: 8px 12px;
+    cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3); font-size: 14px;
+  }
+
+  #sidebar {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 320px; z-index: 400;
+    background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    transform: translateX(0); transition: transform 0.25s ease;
+    display: flex; flex-direction: column;
+  }
+  #sidebar.collapsed { transform: translateX(320px); }
+
+  #sidebar-header {
+    padding: 56px 16px 12px 16px; border-bottom: 1px solid #eee;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #sidebar-header h2 { margin: 0; font-size: 16px; }
+  #clear-btn {
+    background: #e74c3c; color: #fff; border: none; border-radius: 6px;
+    padding: 6px 10px; cursor: pointer; font-size: 13px;
+  }
+  #clear-btn:hover { background: #c0392b; }
+
+  #points-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+  #points-list li {
+    padding: 10px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 13px;
+  }
+  #points-list li:hover { background: #f7f7f7; }
+  #points-list li .user { font-weight: 600; color: #2c3e50; }
+  #points-list li .coords { color: #555; }
+  #points-list li .time { color: #999; font-size: 11px; }
+  #points-list .empty { color: #999; text-align: center; padding: 24px 16px; cursor: default; }
+
+  #toast-container {
+    position: absolute; top: 60px; right: 16px; z-index: 600;
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+  }
+  .toast {
+    background: #2c3e50; color: #fff; padding: 10px 16px; border-radius: 6px;
+    font-size: 13px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    animation: fade-in-out 4s ease forwards;
+    max-width: 280px;
+  }
+  @keyframes fade-in-out {
+    0% { opacity: 0; transform: translateY(-8px); }
+    10% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="status"><span class="dot"></span><span id="status-text">Подключение...</span></div>
+<button id="toggle-sidebar">☰ Точки (<span id="points-count">0</span>)</button>
+<div id="toast-container"></div>
+
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h2>Полученные точки</h2>
+    <button id="clear-btn">Очистить карту</button>
+  </div>
+  <ul id="points-list">
+    <li class="empty">Пока нет точек</li>
+  </ul>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([55.7558, 37.6173], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const redIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/images/marker-shadow.png',
+    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+  });
+
+  const markers = [];
+  const pointsListEl = document.getElementById('points-list');
+  const pointsCountEl = document.getElementById('points-count');
+  const sidebar = document.getElementById('sidebar');
+  const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+  const clearBtn = document.getElementById('clear-btn');
+  const statusEl = document.getElementById('status');
+  const statusTextEl = document.getElementById('status-text');
+  const toastContainer = document.getElementById('toast-container');
+
+  toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+
+  clearBtn.addEventListener('click', () => {
+    markers.forEach(m => map.removeLayer(m));
+    markers.length = 0;
+    pointsListEl.innerHTML = '<li class="empty">Пока нет точек</li>';
+    pointsCountEl.textContent = '0';
+  });
+
+  function formatTime(isoString) {
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleString('ru-RU');
+    } catch (e) {
+      return isoString;
+    }
+  }
+
+  function showToast(text) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = text;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  function addPointToSidebar(data, marker) {
+    const emptyItem = pointsListEl.querySelector('.empty');
+    if (emptyItem) emptyItem.remove();
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="user">${data.user}</div>
+      <div class="coords">Lat: ${data.lat.toFixed(5)}, Lon: ${data.lon.toFixed(5)}</div>
+      <div class="time">${formatTime(data.timestamp)}</div>
+    `;
+    li.addEventListener('click', () => {
+      map.setView([data.lat, data.lon], 16);
+      marker.openPopup();
+    });
+    pointsListEl.prepend(li);
+    pointsCountEl.textContent = markers.length.toString();
+  }
+
+  function handleNewPoint(data) {
+    const marker = L.marker([data.lat, data.lon], { icon: redIcon }).addTo(map);
+    marker.bindPopup(`
+      <b>Пользователь:</b> ${data.user}<br>
+      <b>Координаты:</b> ${data.lat.toFixed(5)}, ${data.lon.toFixed(5)}<br>
+      <b>Время:</b> ${formatTime(data.timestamp)}
+    `);
+    markers.push(marker);
+
+    map.setView([data.lat, data.lon], 15);
+    marker.openPopup();
+
+    addPointToSidebar(data, marker);
+    showToast(`Новая точка от ${data.user} в ${formatTime(data.timestamp)}`);
+  }
+
+  function connectWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${protocol}://${window.location.host}/ws/operator`);
+
+    ws.onopen = () => {
+      statusEl.classList.add('connected');
+      statusTextEl.textContent = 'Подключено';
+    };
+
+    ws.onclose = () => {
+      statusEl.classList.remove('connected');
+      statusTextEl.textContent = 'Переподключение...';
+      setTimeout(connectWebSocket, 2000);
+    };
+
+    ws.onerror = () => ws.close();
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'new_point') {
+          handleNewPoint(data);
+        }
+      } catch (e) {
+        console.error('Некорректное сообщение WebSocket', e);
+      }
+    };
+  }
+
+  connectWebSocket();
+</script>
+</body>
+</html>

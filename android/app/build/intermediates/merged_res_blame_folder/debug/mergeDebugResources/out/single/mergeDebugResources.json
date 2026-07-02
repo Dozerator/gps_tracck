@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "com.example.operator.app-debug-37:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.operator.app-main-39:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.operator.app-main-39:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.operator.app-main-39:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/layout_activity_main.xml.flat",
+        "source": "com.example.operator.app-main-39:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.operator.app-main-39:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/drawable_ic_dot_blue.xml.flat",
+        "source": "com.example.operator.app-main-39:/drawable/ic_dot_blue.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/drawable_ic_marker_blue.xml.flat",
+        "source": "com.example.operator.app-main-39:/drawable/ic_marker_blue.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/layout_activity_login.xml.flat",
+        "source": "com.example.operator.app-main-39:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/layout_dialog_confirm.xml.flat",
+        "source": "com.example.operator.app-main-39:/layout/dialog_confirm.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-37:/drawable_ic_marker_green.xml.flat",
+        "source": "com.example.operator.app-main-39:/drawable/ic_marker_green.xml"
+    }
+]

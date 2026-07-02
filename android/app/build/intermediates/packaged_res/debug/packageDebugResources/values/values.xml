@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#2ECC71</color>
+    <color name="background">#FFFFFF</color>
+    <color name="marker_blue">#1565C0</color>
+    <color name="marker_green">#2ECC71</color>
+    <color name="primary">#1565C0</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="text_primary">#212121</color>
+    <string name="app_name">Operator</string>
+    <string name="background_location_rationale">Для отслеживания местоположения в фоне разрешите доступ к геолокации всегда ("Разрешать всегда") в настройках приложения.</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="confirm_button">Подтвердить</string>
+    <string name="confirm_point_message">Lat: %1$.5f, Lon: %2$.5f</string>
+    <string name="confirm_point_title">Отправить точку?</string>
+    <string name="location_permission_rationale">Приложению требуется доступ к геолокации, чтобы отображать ваше местоположение на карте оператора и отправлять отмеченные точки.</string>
+    <string name="login_button">Войти</string>
+    <string name="login_error">Неверный логин или пароль</string>
+    <string name="login_hint">Логин</string>
+    <string name="login_network_error">Ошибка сети. Проверьте подключение</string>
+    <string name="login_title">Operator Tracker</string>
+    <string name="mark_point_button">Отметить точку</string>
+    <string name="notification_channel_name">Отслеживание местоположения</string>
+    <string name="notification_text">Отслеживание местоположения выполняется в фоне</string>
+    <string name="notification_title">Operator Tracker активен</string>
+    <string name="password_hint">Пароль</string>
+    <string name="point_send_error">Не удалось отправить точку</string>
+    <string name="point_sent_toast">Точка отправлена оператору</string>
+    <style name="Theme.Operator" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
+</resources>

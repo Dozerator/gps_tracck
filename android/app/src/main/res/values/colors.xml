@@ -1,0 +1,9 @@
+<resources>
+    <color name="primary">#1565C0</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="accent">#2ECC71</color>
+    <color name="marker_blue">#1565C0</color>
+    <color name="marker_green">#2ECC71</color>
+    <color name="background">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+</resources>

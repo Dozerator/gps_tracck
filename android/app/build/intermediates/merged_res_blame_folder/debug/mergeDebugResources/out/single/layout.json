@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.example.operator.app-mergeDebugResources-36:/layout/dialog_confirm.xml",
+        "source": "com.example.operator.app-main-39:/layout/dialog_confirm.xml"
+    },
+    {
+        "merged": "com.example.operator.app-mergeDebugResources-36:/layout/activity_main.xml",
+        "source": "com.example.operator.app-main-39:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.operator.app-mergeDebugResources-36:/layout/activity_login.xml",
+        "source": "com.example.operator.app-main-39:/layout/activity_login.xml"
+    }
+]
