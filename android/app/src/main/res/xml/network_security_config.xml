@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Продакшн-сервер: только TLS, доверяем ИСКЛЮЧИТЕЛЬНО нашему самоподписанному
+  сертификату (не системным CA) — см. backend/certs/generate_cert.sh и раздел
+  README "Смена сертификата". Домен ниже — placeholder, замени на реальный
+  IP/домен сервера при развёртывании (значения в network-security-config
+  не могут читаться из BuildConfig/gradle.properties, только литералы).
+-->
+<network-security-config>
+
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="false">192.168.1.100</domain>
+        <trust-anchors>
+            <certificates src="@raw/server_cert" />
+        </trust-anchors>
+    </domain-config>
+
+    <!-- Локальная разработка: эмулятор Android Studio обращается к хост-машине
+         по 10.0.2.2 обычным HTTP — TLS там не поднят и не нужен. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+
+    <base-config cleartextTrafficPermitted="false" />
+
+</network-security-config>

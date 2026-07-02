@@ -1,32 +1,22 @@
 package com.example.operator.network
 
+import android.content.Context
 import com.example.operator.BuildConfig
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import com.example.operator.security.TlsManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
-object RetrofitClient {
+/**
+ * Не object-синглтон, а обычный класс: OkHttpClient должен быть собран с Context
+ * (нужен для чтения самоподписанного сертификата из res/raw при HTTPS). Держится
+ * как единственный экземпляр в [com.example.operator.OperatorApp].
+ */
+class RetrofitClient(context: Context) {
 
     val apiService: ApiService by lazy {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
-        }
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .build()
-
         Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .client(okHttpClient)
+            .baseUrl(BuildConfig.SERVER_URL.trimEnd('/') + "/")
+            .client(TlsManager.buildOkHttpClient(context.applicationContext))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)

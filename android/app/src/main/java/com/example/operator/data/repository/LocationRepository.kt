@@ -53,7 +53,8 @@ class LocationRepository(
                         accuracy = accuracy,
                         timestamp = isoUtc(timestampMillis),
                         objectType = objectType.apiValue,
-                        direction = direction.apiValue
+                        direction = direction.apiValue,
+                        threatLevel = threatLevel.apiValue
                     )
                 )
                 if (response.isSuccessful) {

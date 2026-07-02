@@ -6,11 +6,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.operator.OperatorApp
 import com.example.operator.R
 import com.example.operator.auth.AuthManager
 import com.example.operator.databinding.ActivityLoginBinding
 import com.example.operator.model.LoginRequest
-import com.example.operator.network.RetrofitClient
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -47,7 +47,8 @@ class LoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val response = RetrofitClient.apiService.login(LoginRequest(login, password))
+                val apiService = (application as OperatorApp).retrofitClient.apiService
+                val response = apiService.login(LoginRequest(login, password))
                 if (response.isSuccessful && response.body() != null) {
                     authManager.saveToken(response.body()!!.accessToken)
                     goToMain()

@@ -9,11 +9,11 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.example.operator.OperatorApp
 import com.example.operator.auth.AuthManager
 import com.example.operator.data.local.AppDatabase
 import com.example.operator.data.local.entity.PendingPointEntity
 import com.example.operator.model.LocationPointRequest
-import com.example.operator.network.RetrofitClient
 import com.example.operator.utils.isoUtc
 import java.util.concurrent.TimeUnit
 
@@ -29,6 +29,7 @@ class SyncWorker(
 
     private val dao = AppDatabase.getInstance(context).pendingPointDao()
     private val authManager = AuthManager(context)
+    private val apiService = (context.applicationContext as OperatorApp).retrofitClient.apiService
 
     override suspend fun doWork(): Result {
         val token = authManager.getToken() ?: return Result.retry()
@@ -43,7 +44,7 @@ class SyncWorker(
 
         pendingPoints.forEach { point ->
             try {
-                val response = RetrofitClient.apiService.sendLocationPoint(
+                val response = apiService.sendLocationPoint(
                     "Bearer $token",
                     point.toRequest()
                 )
@@ -101,5 +102,6 @@ fun PendingPointEntity.toRequest(): LocationPointRequest = LocationPointRequest(
     accuracy = accuracy,
     timestamp = isoUtc(timestamp),
     objectType = objectType,
-    direction = direction
+    direction = direction,
+    threatLevel = threatLevel
 )

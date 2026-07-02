@@ -1,30 +1,38 @@
 [
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/dialog_object_type.xml",
-        "source": "com.example.operator.app-main-49:/layout/dialog_object_type.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\item_queue_point.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\item_queue_point.xml"
     },
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/item_queue_point.xml",
-        "source": "com.example.operator.app-main-49:/layout/item_queue_point.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\dialog_object_type.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_object_type.xml"
     },
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/activity_main.xml",
-        "source": "com.example.operator.app-main-49:/layout/activity_main.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\activity_queue.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_queue.xml"
     },
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/dialog_direction.xml",
-        "source": "com.example.operator.app-main-49:/layout/dialog_direction.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\activity_login.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_login.xml"
     },
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/activity_queue.xml",
-        "source": "com.example.operator.app-main-49:/layout/activity_queue.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\dialog_direction.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_direction.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\dialog_confirm.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_confirm.xml"
+    },
+    {
+        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/dialog_threat.xml",
+        "source": "com.example.operator.app-main-49:/layout/dialog_threat.xml"
     },
     {
         "merged": "com.example.operator.app-mergeDebugResources-46:/layout/dialog_confirm.xml",
         "source": "com.example.operator.app-main-49:/layout/dialog_confirm.xml"
     },
     {
-        "merged": "com.example.operator.app-mergeDebugResources-46:/layout/activity_login.xml",
-        "source": "com.example.operator.app-main-49:/layout/activity_login.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-mergeDebugResources-46:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_main.xml"
     }
 ]

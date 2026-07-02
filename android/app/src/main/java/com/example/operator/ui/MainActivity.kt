@@ -1,8 +1,11 @@
 package com.example.operator.ui
 
 import android.Manifest
+import android.animation.AnimatorInflater
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -24,8 +27,10 @@ import com.example.operator.databinding.ActivityMainBinding
 import com.example.operator.databinding.DialogConfirmBinding
 import com.example.operator.databinding.DialogDirectionBinding
 import com.example.operator.databinding.DialogObjectTypeBinding
+import com.example.operator.databinding.DialogThreatBinding
 import com.example.operator.model.Direction
 import com.example.operator.model.ObjectType
+import com.example.operator.model.ThreatLevel
 import com.example.operator.service.LocationService
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
@@ -238,7 +243,7 @@ class MainActivity : AppCompatActivity() {
         val chooseDirection: (Direction) -> Unit = { direction ->
             markPointViewModel.direction = direction
             dialog.dismiss()
-            showFinalConfirmDialog()
+            showThreatDialog()
         }
         dialogBinding.northButton.setOnClickListener { chooseDirection(Direction.NORTH) }
         dialogBinding.southButton.setOnClickListener { chooseDirection(Direction.SOUTH) }
@@ -256,16 +261,69 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // Шаг 3: подтверждение и отправка данных оператору.
+    // Шаг 3: оценка уровня угрозы.
+    private fun showThreatDialog() {
+        val dialogBinding = DialogThreatBinding.inflate(LayoutInflater.from(this))
+
+        dialogBinding.threatObservationTitle.text = ThreatLevel.OBSERVATION.label
+        dialogBinding.threatObservationSubtitle.text = ThreatLevel.OBSERVATION.subtitle
+        dialogBinding.threatAttentionTitle.text = ThreatLevel.ATTENTION.label
+        dialogBinding.threatAttentionSubtitle.text = ThreatLevel.ATTENTION.subtitle
+        dialogBinding.threatThreatTitle.text = ThreatLevel.THREAT.label
+        dialogBinding.threatThreatSubtitle.text = ThreatLevel.THREAT.subtitle
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Пульс запускается сразу при показе диалога и останавливается при его закрытии,
+        // чтобы аниматор не продолжал работать на отсоединённой view (утечка).
+        val pulseAnimator = AnimatorInflater.loadAnimator(this, R.animator.pulse_animation).apply {
+            setTarget(dialogBinding.threatThreatRow)
+        }
+        dialog.setOnShowListener { pulseAnimator.start() }
+        dialog.setOnDismissListener { pulseAnimator.cancel() }
+
+        val chooseThreat: (ThreatLevel) -> Unit = { threatLevel ->
+            markPointViewModel.threatLevel = threatLevel
+            dialog.dismiss()
+            showFinalConfirmDialog()
+        }
+        dialogBinding.threatObservationRow.setOnClickListener { chooseThreat(ThreatLevel.OBSERVATION) }
+        dialogBinding.threatAttentionRow.setOnClickListener { chooseThreat(ThreatLevel.ATTENTION) }
+        dialogBinding.threatThreatRow.setOnClickListener { chooseThreat(ThreatLevel.THREAT) }
+
+        dialogBinding.threatBackButton.setOnClickListener {
+            dialog.dismiss()
+            showDirectionDialog()
+        }
+        dialogBinding.threatCancelButton.setOnClickListener {
+            dialog.dismiss()
+            cancelMarking()
+        }
+        dialog.show()
+    }
+
+    // Шаг 4: подтверждение и отправка данных оператору.
     private fun showFinalConfirmDialog() {
         val location = markPointViewModel.location ?: return
         val objectType = markPointViewModel.objectType ?: return
         val direction = markPointViewModel.direction ?: return
+        val threatLevel = markPointViewModel.threatLevel ?: return
 
         val dialogBinding = DialogConfirmBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.dialogTitle.text = if (threatLevel == ThreatLevel.THREAT) {
+            getString(R.string.confirm_point_title_threat)
+        } else {
+            getString(R.string.confirm_point_title)
+        }
         dialogBinding.dialogTypeLine.text = getString(R.string.confirm_point_type, objectType.label)
         dialogBinding.dialogDirectionLine.text =
             getString(R.string.confirm_point_direction, "${direction.arrow} ${direction.label}")
+        dialogBinding.dialogThreatLine.text =
+            getString(R.string.confirm_point_threat, threatLevel.icon, threatLevel.label)
         dialogBinding.dialogCoordinates.text =
             getString(R.string.confirm_point_coordinates, location.latitude, location.longitude)
 
@@ -275,9 +333,22 @@ class MainActivity : AppCompatActivity() {
             .create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
+        // При УГРОЗЕ кнопка отправки мигает красным, как и предупреждение в заголовке.
+        val sendButtonPulse = if (threatLevel == ThreatLevel.THREAT) {
+            dialogBinding.confirmSendButton.backgroundTintList =
+                ColorStateList.valueOf(Color.parseColor(ThreatLevel.THREAT.colorHex))
+            AnimatorInflater.loadAnimator(this, R.animator.pulse_animation).apply {
+                setTarget(dialogBinding.confirmSendButton)
+            }
+        } else {
+            null
+        }
+        dialog.setOnShowListener { sendButtonPulse?.start() }
+        dialog.setOnDismissListener { sendButtonPulse?.cancel() }
+
         dialogBinding.confirmSendButton.setOnClickListener {
             dialog.dismiss()
-            sendLocationPoint(location, objectType, direction)
+            sendLocationPoint(location, objectType, direction, threatLevel)
         }
         dialogBinding.confirmCancelButton.setOnClickListener {
             dialog.dismiss()
@@ -295,7 +366,7 @@ class MainActivity : AppCompatActivity() {
 
     // Отправка идёт через MainViewModel/LocationRepository: онлайн — сразу на сервер,
     // офлайн (или ошибка сети) — в локальную очередь Room с последующей автосинхронизацией.
-    private fun sendLocationPoint(location: Location, objectType: ObjectType, direction: Direction) {
+    private fun sendLocationPoint(location: Location, objectType: ObjectType, direction: Direction, threatLevel: ThreatLevel) {
         pendingSendObjectType = objectType
         mainViewModel.sendPoint(
             lat = location.latitude,
@@ -303,7 +374,8 @@ class MainActivity : AppCompatActivity() {
             accuracy = location.accuracy,
             timestampMillis = location.time,
             objectType = objectType,
-            direction = direction
+            direction = direction,
+            threatLevel = threatLevel
         )
         markPointViewModel.reset()
     }

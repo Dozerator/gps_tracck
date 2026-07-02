@@ -24,22 +24,29 @@ async def create_point(
         timestamp=payload.timestamp,
         object_type=payload.object_type,
         direction=payload.direction,
+        threat_level=payload.threat_level,
     )
     db.add(point)
     db.commit()
     db.refresh(point)
 
-    await manager.broadcast(
-        {
-            "type": "new_point",
-            "user": current_user.login,
-            "lat": point.lat,
-            "lon": point.lon,
-            "accuracy": point.accuracy,
-            "object_type": point.object_type,
-            "direction": point.direction,
-            "timestamp": point.timestamp.isoformat(),
-        }
-    )
+    message = {
+        "type": "new_point",
+        "user": current_user.login,
+        "lat": point.lat,
+        "lon": point.lon,
+        "accuracy": point.accuracy,
+        "object_type": point.object_type,
+        "direction": point.direction,
+        "threat_level": point.threat_level,
+        "timestamp": point.timestamp.isoformat(),
+    }
+
+    # THREAT — рассылаем немедленно и параллельно всем операторам;
+    # остальные уровни идут стандартной последовательной рассылкой.
+    if point.threat_level == "THREAT":
+        await manager.broadcast_priority(message)
+    else:
+        await manager.broadcast(message)
 
     return point

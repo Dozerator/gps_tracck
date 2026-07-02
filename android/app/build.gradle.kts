@@ -4,6 +4,11 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// Читает значение из gradle.properties с дефолтом, чтобы свежий чекаут собирался
+// "из коробки" против эмулятора, даже если разработчик не настраивал прод-сервер.
+fun gradleProp(name: String, default: String): String =
+    (project.findProperty(name) as String?)?.takeIf { it.isNotBlank() } ?: default
+
 android {
     namespace = "com.example.operator"
     compileSdk = 34
@@ -15,8 +20,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Базовый URL backend-сервера. Для эмулятора Android 10.0.2.2 указывает на localhost хост-машины.
-        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8001/\"")
+        // Адрес backend-сервера и параметры TLS — см. gradle.properties.
+        buildConfigField("String", "SERVER_IP", "\"${gradleProp("SERVER_IP", "10.0.2.2")}\"")
+        buildConfigField("String", "SERVER_URL", "\"${gradleProp("SERVER_URL", "http://10.0.2.2:8002")}\"")
+        buildConfigField("String", "WS_URL", "\"${gradleProp("WS_URL", "ws://10.0.2.2:8002/ws/operator")}\"")
+        buildConfigField("String", "CERT_PIN", "\"${gradleProp("CERT_PIN", "")}\"")
     }
 
     buildTypes {
@@ -54,6 +62,7 @@ dependencies {
     // Сеть
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Геолокация

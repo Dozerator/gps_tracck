@@ -164,8 +164,8 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\obi\.gradle\caches
 		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:18:9-35
 	android:theme
 		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:24:9-46
-	android:usesCleartextTraffic
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:23:9-44
+	android:networkSecurityConfig
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:23:9-69
 	android:name
 		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:17:9-36
 activity#com.example.operator.ui.LoginActivity

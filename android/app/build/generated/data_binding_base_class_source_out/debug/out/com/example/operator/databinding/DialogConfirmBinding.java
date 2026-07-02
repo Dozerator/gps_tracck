@@ -33,6 +33,9 @@ public final class DialogConfirmBinding implements ViewBinding {
   public final TextView dialogDirectionLine;
 
   @NonNull
+  public final TextView dialogThreatLine;
+
+  @NonNull
   public final TextView dialogTitle;
 
   @NonNull
@@ -41,12 +44,14 @@ public final class DialogConfirmBinding implements ViewBinding {
   private DialogConfirmBinding(@NonNull LinearLayout rootView,
       @NonNull MaterialButton confirmCancelButton, @NonNull MaterialButton confirmSendButton,
       @NonNull TextView dialogCoordinates, @NonNull TextView dialogDirectionLine,
-      @NonNull TextView dialogTitle, @NonNull TextView dialogTypeLine) {
+      @NonNull TextView dialogThreatLine, @NonNull TextView dialogTitle,
+      @NonNull TextView dialogTypeLine) {
     this.rootView = rootView;
     this.confirmCancelButton = confirmCancelButton;
     this.confirmSendButton = confirmSendButton;
     this.dialogCoordinates = dialogCoordinates;
     this.dialogDirectionLine = dialogDirectionLine;
+    this.dialogThreatLine = dialogThreatLine;
     this.dialogTitle = dialogTitle;
     this.dialogTypeLine = dialogTypeLine;
   }
@@ -102,6 +107,12 @@ public final class DialogConfirmBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.dialogThreatLine;
+      TextView dialogThreatLine = ViewBindings.findChildViewById(rootView, id);
+      if (dialogThreatLine == null) {
+        break missingId;
+      }
+
       id = R.id.dialogTitle;
       TextView dialogTitle = ViewBindings.findChildViewById(rootView, id);
       if (dialogTitle == null) {
@@ -115,7 +126,8 @@ public final class DialogConfirmBinding implements ViewBinding {
       }
 
       return new DialogConfirmBinding((LinearLayout) rootView, confirmCancelButton,
-          confirmSendButton, dialogCoordinates, dialogDirectionLine, dialogTitle, dialogTypeLine);
+          confirmSendButton, dialogCoordinates, dialogDirectionLine, dialogThreatLine, dialogTitle,
+          dialogTypeLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

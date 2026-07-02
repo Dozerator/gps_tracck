@@ -47,14 +47,18 @@
   #points-list li {
     padding: 10px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
     font-size: 13px; display: flex; align-items: center; gap: 8px; color: #2c3e50;
+    border-left: 4px solid transparent;
   }
   #points-list li:hover { background: #f7f7f7; }
   #points-list li .entry-icon { font-size: 16px; flex-shrink: 0; }
   #points-list .empty { color: #999; text-align: center; padding: 24px 16px; cursor: default; }
+  #points-list li.level-observation { background: rgba(76, 175, 80, 0.10); border-left-color: #4CAF50; }
+  #points-list li.level-attention { background: rgba(255, 152, 0, 0.12); border-left-color: #FF9800; }
+  #points-list li.level-threat { background: rgba(244, 67, 54, 0.14); border-left-color: #F44336; }
 
   #toast-container {
-    position: absolute; top: 60px; right: 16px; z-index: 600;
-    display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+    position: fixed; top: 20px; right: 20px; z-index: 10000;
+    display: flex; flex-direction: column; gap: 10px;
   }
   .toast {
     background: #2c3e50; color: #fff; padding: 10px 16px; border-radius: 6px;
@@ -71,6 +75,47 @@
 
   .popup-card { font-size: 13px; line-height: 1.6; }
   .popup-card .popup-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+
+  /* --- Уровень угрозы: экстренные уведомления --- */
+  #threat-flash {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(244, 67, 54, 0.4);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .threat-toast, .attention-toast {
+    color: white;
+    border-radius: 8px;
+    padding: 12px 16px;
+    min-width: 280px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease;
+  }
+  .threat-toast {
+    background: #B71C1C;
+    border-left: 4px solid #FF1744;
+  }
+  .attention-toast {
+    background: #E65100;
+    border-left: 4px solid #FF9800;
+  }
+  .toast-header { font-weight: bold; font-size: 16px; margin-bottom: 4px; }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+  }
+
+  .pulse-circle { animation: pulse 1.5s ease-in-out infinite; transform-origin: center; }
+  @keyframes pulse {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -80,6 +125,7 @@
 <div id="status"><span class="dot"></span><span id="status-text">Подключение...</span></div>
 <button id="toggle-sidebar">☰ Точки (<span id="points-count">0</span>)</button>
 <div id="toast-container"></div>
+<div id="threat-flash"></div>
 
 <div id="sidebar">
   <div id="sidebar-header">
@@ -99,30 +145,34 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // --- SVG-иконки объектов (вид сверху) ---
-  const UAV_SVG = `
-    <svg width="32" height="32" viewBox="0 0 32 32">
-      <ellipse cx="16" cy="16" rx="3" ry="12" fill="#FF4444"/>
-      <ellipse cx="16" cy="14" rx="14" ry="3" fill="#FF4444"/>
-      <ellipse cx="16" cy="25" rx="6" ry="2" fill="#FF4444"/>
-    </svg>`;
+  // --- SVG-иконки объектов (вид сверху). Цвет заливки зависит от уровня угрозы, не от типа. ---
+  function uavSvg(color) {
+    return `
+      <svg width="32" height="32" viewBox="0 0 32 32">
+        <ellipse cx="16" cy="16" rx="3" ry="12" fill="${color}"/>
+        <ellipse cx="16" cy="14" rx="14" ry="3" fill="${color}"/>
+        <ellipse cx="16" cy="25" rx="6" ry="2" fill="${color}"/>
+      </svg>`;
+  }
 
-  const QUAD_SVG = `
-    <svg width="36" height="36" viewBox="0 0 36 36">
-      <rect x="13" y="13" width="10" height="10" rx="2" fill="#4444FF"/>
-      <line x1="18" y1="18" x2="5" y2="5" stroke="#4444FF" stroke-width="2"/>
-      <line x1="18" y1="18" x2="31" y2="5" stroke="#4444FF" stroke-width="2"/>
-      <line x1="18" y1="18" x2="5" y2="31" stroke="#4444FF" stroke-width="2"/>
-      <line x1="18" y1="18" x2="31" y2="31" stroke="#4444FF" stroke-width="2"/>
-      <circle cx="5" cy="5" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
-      <circle cx="31" cy="5" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
-      <circle cx="5" cy="31" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
-      <circle cx="31" cy="31" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
-    </svg>`;
+  function quadSvg(color) {
+    return `
+      <svg width="36" height="36" viewBox="0 0 36 36">
+        <rect x="13" y="13" width="10" height="10" rx="2" fill="${color}"/>
+        <line x1="18" y1="18" x2="5" y2="5" stroke="${color}" stroke-width="2"/>
+        <line x1="18" y1="18" x2="31" y2="5" stroke="${color}" stroke-width="2"/>
+        <line x1="18" y1="18" x2="5" y2="31" stroke="${color}" stroke-width="2"/>
+        <line x1="18" y1="18" x2="31" y2="31" stroke="${color}" stroke-width="2"/>
+        <circle cx="5" cy="5" r="4" fill="none" stroke="${color}" stroke-width="2"/>
+        <circle cx="31" cy="5" r="4" fill="none" stroke="${color}" stroke-width="2"/>
+        <circle cx="5" cy="31" r="4" fill="none" stroke="${color}" stroke-width="2"/>
+        <circle cx="31" cy="31" r="4" fill="none" stroke="${color}" stroke-width="2"/>
+      </svg>`;
+  }
 
   const OBJECT_META = {
-    UAV:  { label: 'БЕСПИЛОТНИК', icon: '✈', color: '#FF4444', svg: UAV_SVG, size: [32, 32] },
-    QUAD: { label: 'КВАДРИК',     icon: '⬡', color: '#4444FF', svg: QUAD_SVG, size: [36, 36] }
+    UAV:  { label: 'БЕСПИЛОТНИК', icon: '✈', svg: uavSvg,  size: [32, 32] },
+    QUAD: { label: 'КВАДРИК',     icon: '⬡', svg: quadSvg, size: [36, 36] }
   };
 
   const DIRECTION_META = {
@@ -130,6 +180,13 @@
     SOUTH: { label: 'ЮГ',    arrow: '↓', dLat: -1, dLon: 0,  rotation: 180 },
     EAST:  { label: 'ВОСТОК', arrow: '→', dLat: 0,  dLon: 1,  rotation: 90 },
     WEST:  { label: 'ЗАПАД', arrow: '←', dLat: 0,  dLon: -1, rotation: 270 }
+  };
+
+  // Цвета — NATO threat color coding (зелёный/жёлтый/красный).
+  const THREAT_META = {
+    OBSERVATION: { label: 'НАБЛЮДЕНИЕ', icon: '🟢', color: '#4CAF50' },
+    ATTENTION:   { label: 'ВНИМАНИЕ',   icon: '🟡', color: '#FF9800' },
+    THREAT:      { label: 'УГРОЗА',     icon: '🔴', color: '#F44336' }
   };
 
   function objectMeta(objectType) {
@@ -140,11 +197,16 @@
     return DIRECTION_META[direction] || DIRECTION_META.NORTH;
   }
 
-  function createObjectIcon(objectType) {
+  function threatMeta(threatLevel) {
+    return THREAT_META[threatLevel] || THREAT_META.OBSERVATION;
+  }
+
+  function createObjectIcon(objectType, threatLevel) {
     const meta = objectMeta(objectType);
+    const color = threatMeta(threatLevel).color;
     return L.divIcon({
       className: '',
-      html: meta.svg,
+      html: meta.svg(color),
       iconSize: meta.size,
       iconAnchor: [meta.size[0] / 2, meta.size[1] / 2],
       popupAnchor: [0, -meta.size[1] / 2]
@@ -185,6 +247,18 @@
     return { line, arrowHead };
   }
 
+  // Пульсирующий круг вокруг маркера УГРОЗЫ.
+  function addPulsingMarker(lat, lon) {
+    return L.circle([lat, lon], {
+      radius: 150,
+      color: THREAT_META.THREAT.color,
+      fillColor: THREAT_META.THREAT.color,
+      fillOpacity: 0.15,
+      weight: 2,
+      className: 'pulse-circle'
+    }).addTo(map);
+  }
+
   const points = [];
   const pointsListEl = document.getElementById('points-list');
   const pointsCountEl = document.getElementById('points-count');
@@ -194,14 +268,17 @@
   const statusEl = document.getElementById('status');
   const statusTextEl = document.getElementById('status-text');
   const toastContainer = document.getElementById('toast-container');
+  const threatFlashEl = document.getElementById('threat-flash');
+  const originalTitle = document.title;
 
   toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
 
   clearBtn.addEventListener('click', () => {
-    points.forEach(({ marker, line, arrowHead }) => {
+    points.forEach(({ marker, line, arrowHead, pulseCircle }) => {
       map.removeLayer(marker);
       map.removeLayer(line);
       map.removeLayer(arrowHead);
+      if (pulseCircle) map.removeLayer(pulseCircle);
     });
     points.length = 0;
     pointsListEl.innerHTML = '<li class="empty">Пока нет точек</li>';
@@ -228,17 +305,102 @@
     setTimeout(() => toast.remove(), 4000);
   }
 
+  function showThreatToast(data) {
+    const meta = objectMeta(data.object_type);
+    const dirMeta = directionMeta(data.direction);
+
+    const toast = document.createElement('div');
+    toast.className = 'threat-toast';
+    toast.innerHTML = `
+      <div class="toast-header">🔴 УГРОЗА</div>
+      <div class="toast-body">
+        ${meta.icon} ${data.object_type} | ${dirMeta.arrow} ${dirMeta.label}
+        <br>от: ${data.user} | ${formatClock(data.timestamp, true)}
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 8000);
+  }
+
+  function showAttentionToast(data) {
+    const meta = objectMeta(data.object_type);
+    const dirMeta = directionMeta(data.direction);
+
+    const toast = document.createElement('div');
+    toast.className = 'attention-toast';
+    toast.innerHTML = `
+      <div class="toast-header">🟡 ВНИМАНИЕ</div>
+      <div class="toast-body">
+        ${meta.icon} ${data.object_type} | ${dirMeta.arrow} ${dirMeta.label}
+        <br>от: ${data.user} | ${formatClock(data.timestamp, true)}
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 6000);
+  }
+
+  // Звуковые оповещения синтезируются через Web Audio API (осциллятор), а не через
+  // внешние mp3-файлы: так не нужно поставлять бинарные ассеты и звук работает сразу
+  // после клонирования репозитория. Браузеры не проигрывают звук до первого клика
+  // пользователем по странице — это ограничение автоплея, не баг.
+  let audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContextClass();
+    }
+    return audioCtx;
+  }
+
+  function playAlertTone(frequency, durationMs, repeats) {
+    try {
+      const ctx = getAudioContext();
+      for (let i = 0; i < repeats; i++) {
+        const startTime = ctx.currentTime + i * (durationMs / 1000 + 0.15);
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.type = 'square';
+        oscillator.frequency.value = frequency;
+        gain.gain.setValueAtTime(0.25, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + durationMs / 1000);
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        oscillator.start(startTime);
+        oscillator.stop(startTime + durationMs / 1000);
+      }
+    } catch (e) {
+      console.warn('Не удалось воспроизвести звук оповещения', e);
+    }
+  }
+
+  function playThreatAlert() { playAlertTone(880, 220, 3); }
+  function playAttentionAlert() { playAlertTone(523, 300, 1); }
+
+  function flashThreatOverlay() {
+    threatFlashEl.style.display = 'block';
+    setTimeout(() => { threatFlashEl.style.display = 'none'; }, 800);
+  }
+
+  // Мигание заголовка вкладки + запрос фокуса окна, пока оператор не вернётся к странице.
+  function alertBrowserWindow() {
+    window.focus();
+    document.title = '⚠ УГРОЗА — ' + originalTitle;
+  }
+  window.addEventListener('focus', () => { document.title = originalTitle; });
+
   function addPointToSidebar(data, marker) {
     const emptyItem = pointsListEl.querySelector('.empty');
     if (emptyItem) emptyItem.remove();
 
     const meta = objectMeta(data.object_type);
     const dirMeta = directionMeta(data.direction);
+    const tMeta = threatMeta(data.threat_level);
 
     const li = document.createElement('li');
+    li.classList.add(`level-${(data.threat_level || 'OBSERVATION').toLowerCase()}`);
     li.innerHTML = `
-      <span class="entry-icon">${meta.icon}</span>
-      <span>${formatClock(data.timestamp)} | ${dirMeta.label}${dirMeta.arrow} | ${data.user}</span>
+      <span class="entry-icon">${tMeta.icon}</span>
+      <span>${formatClock(data.timestamp)} | ${meta.icon} ${data.object_type} | ${dirMeta.arrow} ${dirMeta.label} | ${data.user}</span>
     `;
     li.addEventListener('click', () => {
       map.setView([data.lat, data.lon], 16);
@@ -251,11 +413,13 @@
   function handleNewPoint(data) {
     const meta = objectMeta(data.object_type);
     const dirMeta = directionMeta(data.direction);
+    const tMeta = threatMeta(data.threat_level);
 
-    const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type) }).addTo(map);
+    const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type, data.threat_level) }).addTo(map);
     marker.bindPopup(`
       <div class="popup-card">
         <div class="popup-title">${meta.icon} ${meta.label}</div>
+        Угроза: ${tMeta.icon} ${tMeta.label}<br>
         Направление: ${dirMeta.arrow} ${dirMeta.label}<br>
         Координаты: ${data.lat.toFixed(5)}, ${data.lon.toFixed(5)}<br>
         Время: ${formatClock(data.timestamp, true)}<br>
@@ -263,14 +427,28 @@
       </div>
     `);
 
-    const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction, meta.color);
-    points.push({ marker, line, arrowHead });
-
-    map.setView([data.lat, data.lon], 15);
-    marker.openPopup();
+    const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction, tMeta.color);
+    const pulseCircle = data.threat_level === 'THREAT' ? addPulsingMarker(data.lat, data.lon) : null;
+    points.push({ marker, line, arrowHead, pulseCircle });
 
     addPointToSidebar(data, marker);
-    showToast(`Новая точка от ${data.user} в ${formatClock(data.timestamp)}`);
+
+    if (data.threat_level === 'THREAT') {
+      playThreatAlert();
+      flashThreatOverlay();
+      showThreatToast(data);
+      alertBrowserWindow();
+      map.flyTo([data.lat, data.lon], 15, { duration: 1.5 });
+    } else if (data.threat_level === 'ATTENTION') {
+      playAttentionAlert();
+      showAttentionToast(data);
+      map.setView([data.lat, data.lon], 15);
+      marker.openPopup();
+    } else {
+      map.setView([data.lat, data.lon], 15);
+      marker.openPopup();
+      showToast(`Новая точка от ${data.user} в ${formatClock(data.timestamp)}`);
+    }
   }
 
   function connectWebSocket() {

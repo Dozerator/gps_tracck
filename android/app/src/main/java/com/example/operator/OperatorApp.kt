@@ -13,11 +13,12 @@ class OperatorApp : Application() {
     val authManager: AuthManager by lazy { AuthManager(this) }
     val networkMonitor: NetworkMonitor by lazy { NetworkMonitor(this) }
     val database: AppDatabase by lazy { AppDatabase.getInstance(this) }
+    val retrofitClient: RetrofitClient by lazy { RetrofitClient(this) }
 
     val locationRepository: LocationRepository by lazy {
         LocationRepository(
             dao = database.pendingPointDao(),
-            apiService = RetrofitClient.apiService,
+            apiService = retrofitClient.apiService,
             authManager = authManager,
             networkMonitor = networkMonitor,
             context = this

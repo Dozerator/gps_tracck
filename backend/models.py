@@ -29,5 +29,6 @@ class LocationPoint(Base):
     sent_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     object_type = Column(String(10), nullable=False)
     direction = Column(String(10), nullable=False)
+    threat_level = Column(String(15), nullable=False, default="OBSERVATION")
 
     user = relationship("User", back_populates="points")

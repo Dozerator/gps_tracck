@@ -21,9 +21,13 @@
 
     <string name="direction_dialog_title">Направление движения</string>
 
-    <string name="confirm_point_title">Отправить данные оператору?</string>
+    <string name="threat_dialog_title">ОЦЕНИТЕ УГРОЗУ</string>
+
+    <string name="confirm_point_title">ПОДТВЕРДИТЕ ОТПРАВКУ</string>
+    <string name="confirm_point_title_threat">⚠ ВНИМАНИЕ — УГРОЗА</string>
     <string name="confirm_point_type">Тип: %1$s</string>
     <string name="confirm_point_direction">Направление: %1$s</string>
+    <string name="confirm_point_threat">Угроза: %1$s %2$s</string>
     <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
     <string name="send_button">✓ ОТПРАВИТЬ</string>
 

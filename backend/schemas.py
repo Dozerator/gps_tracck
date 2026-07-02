@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 ObjectType = Literal["UAV", "QUAD"]
 Direction = Literal["NORTH", "SOUTH", "EAST", "WEST"]
+ThreatLevel = Literal["OBSERVATION", "ATTENTION", "THREAT"]
 
 
 class LoginRequest(BaseModel):
@@ -25,6 +26,7 @@ class LocationPointCreate(BaseModel):
     timestamp: datetime
     object_type: ObjectType
     direction: Direction
+    threat_level: ThreatLevel = "OBSERVATION"
 
 
 class LocationPointResponse(BaseModel):
@@ -37,6 +39,7 @@ class LocationPointResponse(BaseModel):
     sent_at: datetime
     object_type: ObjectType
     direction: Direction
+    threat_level: ThreatLevel
 
     class Config:
         from_attributes = True

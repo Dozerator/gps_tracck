@@ -50,3 +50,18 @@ async def operator_websocket(websocket: WebSocket):
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    # Продакшн-запуск: TLS терминируется на Nginx (см. nginx/operator.conf),
+    # поэтому FastAPI слушает только localhost и не доступен снаружи напрямую.
+    # Для локальной разработки без Nginx используйте:
+    #   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=False,
+    )

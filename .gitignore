@@ -1,0 +1,16 @@
+# Backend
+backend/venv/
+backend/.env
+backend/certs/server.key
+backend/certs/cert.conf
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/*.iml
+android/.idea/

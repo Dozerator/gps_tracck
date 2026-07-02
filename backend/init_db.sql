@@ -20,8 +20,9 @@ CREATE TABLE IF NOT EXISTS location_points (
     accuracy DOUBLE PRECISION,
     timestamp TIMESTAMPTZ NOT NULL,
     sent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    object_type VARCHAR(10) NOT NULL,  -- 'UAV' или 'QUAD'
-    direction VARCHAR(10) NOT NULL     -- 'NORTH', 'SOUTH', 'EAST' или 'WEST'
+    object_type VARCHAR(10) NOT NULL,     -- 'UAV' или 'QUAD'
+    direction VARCHAR(10) NOT NULL,       -- 'NORTH', 'SOUTH', 'EAST' или 'WEST'
+    threat_level VARCHAR(15) NOT NULL DEFAULT 'OBSERVATION'  -- 'OBSERVATION', 'ATTENTION' или 'THREAT'
 );
 
 CREATE INDEX IF NOT EXISTS idx_location_points_user_id ON location_points(user_id);

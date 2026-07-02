@@ -1,0 +1,15 @@
+[Unit]
+Description=Operator Tracking FastAPI backend
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/operator/app
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/operator/app/venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -14,13 +14,15 @@ enum class Direction(val apiValue: String, val label: String, val arrow: String)
     WEST("WEST", "ЗАПАД", "←")
 }
 
-/**
- * Уровень угрозы. Хранится локально в очереди точек (см. [com.example.operator.data.local.entity.PendingPointEntity]).
- * В текущем UI-флоу шага выбора уровня угрозы нет, поэтому используется значение по умолчанию
- * [OBSERVATION]; backend пока не принимает это поле, и оно не уходит в сетевой запрос.
- */
-enum class ThreatLevel(val apiValue: String, val label: String) {
-    OBSERVATION("OBSERVATION", "НАБЛЮДЕНИЕ"),
-    ATTENTION("ATTENTION", "ВНИМАНИЕ"),
-    THREAT("THREAT", "УГРОЗА")
+/** Уровень угрозы, значение apiValue уходит в JSON как "threat_level". Цвета — NATO threat color coding. */
+enum class ThreatLevel(
+    val apiValue: String,
+    val label: String,
+    val subtitle: String,
+    val icon: String,
+    val colorHex: String
+) {
+    OBSERVATION("OBSERVATION", "НАБЛЮДЕНИЕ", "Летит мимо, не опасен", "🟢", "#1B5E20"),
+    ATTENTION("ATTENTION", "ВНИМАНИЕ", "Приближается к позиции", "🟡", "#E65100"),
+    THREAT("THREAT", "УГРОЗА", "Прямой курс на позицию", "🔴", "#B71C1C")
 }

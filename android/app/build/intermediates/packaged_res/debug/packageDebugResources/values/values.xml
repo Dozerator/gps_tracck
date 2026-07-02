@@ -24,7 +24,9 @@
     <string name="confirm_button">Подтвердить</string>
     <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
     <string name="confirm_point_direction">Направление: %1$s</string>
-    <string name="confirm_point_title">Отправить данные оператору?</string>
+    <string name="confirm_point_threat">Угроза: %1$s %2$s</string>
+    <string name="confirm_point_title">ПОДТВЕРДИТЕ ОТПРАВКУ</string>
+    <string name="confirm_point_title_threat">⚠ ВНИМАНИЕ — УГРОЗА</string>
     <string name="confirm_point_type">Тип: %1$s</string>
     <string name="direction_dialog_title">Направление движения</string>
     <string name="location_permission_rationale">Приложению требуется доступ к геолокации, чтобы отображать ваше местоположение на карте оператора и отправлять отмеченные точки.</string>
@@ -54,6 +56,7 @@
     <string name="status_offline">● ОФЛАЙН — точки сохраняются локально</string>
     <string name="status_online">● ОНЛАЙН</string>
     <string name="status_queue_count">| В очереди: %1$d</string>
+    <string name="threat_dialog_title">ОЦЕНИТЕ УГРОЗУ</string>
     <style name="Theme.Operator" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
