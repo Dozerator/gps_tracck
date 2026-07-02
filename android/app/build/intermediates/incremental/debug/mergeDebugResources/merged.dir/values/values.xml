@@ -625,7 +625,11 @@
     </attr>
     <bool name="abc_action_bar_embed_tabs">true</bool>
     <bool name="abc_config_actionMenuItemAllCaps">true</bool>
+    <bool name="enable_system_alarm_service_default">true</bool>
+    <bool name="enable_system_foreground_service_default">true</bool>
+    <bool name="enable_system_job_service_default">false</bool>
     <bool name="mtrl_btn_textappearance_all_caps">true</bool>
+    <bool name="workmanager_test_configuration">false</bool>
     <color name="abc_decor_view_status_guard">#ff000000</color>
     <color name="abc_decor_view_status_guard_light">#ffffffff</color>
     <color name="abc_search_url_text_normal">#7fa87f</color>
@@ -634,6 +638,7 @@
     <color name="accent">#2ECC71</color>
     <color name="accent_material_dark">@color/material_deep_teal_200</color>
     <color name="accent_material_light">@color/material_deep_teal_500</color>
+    <color name="accent_orange">#FF6B00</color>
     <color name="androidx_core_ripple_material_light">#1f000000</color>
     <color name="androidx_core_secondary_text_default_material_light">#8a000000</color>
     <color name="background">#FFFFFF</color>
@@ -698,10 +703,14 @@
     <color name="design_fab_stroke_top_inner_color">#1AFFFFFF</color>
     <color name="design_fab_stroke_top_outer_color">#2EFFFFFF</color>
     <color name="design_snackbar_background_color">#323232</color>
+    <color name="dialog_background">#1C1C1E</color>
+    <color name="dialog_text">#F2F2F7</color>
+    <color name="dialog_text_secondary">#9A9A9E</color>
     <color name="dim_foreground_disabled_material_dark">#80bebebe</color>
     <color name="dim_foreground_disabled_material_light">#80323232</color>
     <color name="dim_foreground_material_dark">#ffbebebe</color>
     <color name="dim_foreground_material_light">#ff323232</color>
+    <color name="direction_button_bg">#2C2C2E</color>
     <color name="error_color_material_dark">#ff7043</color>
     <color name="error_color_material_light">#ff5722</color>
     <color name="foreground_material_dark">@android:color/white</color>
@@ -881,6 +890,8 @@
     <color name="m3_sys_color_tertiary_fixed_dim">@color/m3_ref_palette_tertiary80</color>
     <color name="marker_blue">#1565C0</color>
     <color name="marker_green">#2ECC71</color>
+    <color name="marker_quad">#4444FF</color>
+    <color name="marker_uav">#FF4444</color>
     <color name="material_blue_grey_800">#ff37474f</color>
     <color name="material_blue_grey_900">#ff263238</color>
     <color name="material_blue_grey_950">#ff21272b</color>
@@ -965,6 +976,9 @@
     <color name="secondary_text_default_material_light">#8a000000</color>
     <color name="secondary_text_disabled_material_dark">#36ffffff</color>
     <color name="secondary_text_disabled_material_light">#24000000</color>
+    <color name="status_offline">#C62828</color>
+    <color name="status_online">#2E7D32</color>
+    <color name="status_queued">#F57F17</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
     <color name="switch_thumb_disabled_material_light">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_dark">#ffbdbdbd</color>
@@ -1820,6 +1834,7 @@
     <item name="ghost_view" type="id"/>
     <item name="ghost_view_holder" type="id"/>
     <item name="home" type="id"/>
+    <item name="is_pooling_container_tag" type="id"/>
     <item name="item_touch_helper_previous_elevation" type="id"/>
     <item name="line1" type="id"/>
     <item name="line3" type="id"/>
@@ -1840,6 +1855,7 @@
     <item name="navigation_bar_item_large_label_view" type="id"/>
     <item name="navigation_bar_item_small_label_view" type="id"/>
     <item name="parent_matrix" type="id"/>
+    <item name="pooling_container_listener_holder_tag" type="id"/>
     <item name="progress_circular" type="id"/>
     <item name="progress_horizontal" type="id"/>
     <item name="report_drawn" type="id"/>
@@ -1995,6 +2011,7 @@
     <string name="androidx_startup" translatable="false">androidx.startup</string>
     <string name="app_name">Operator</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="back_button">Назад</string>
     <string name="background_location_rationale">Для отслеживания местоположения в фоне разрешите доступ к геолокации всегда ("Разрешать всегда") в настройках приложения.</string>
     <string name="base">OSM base layer</string>
     <string name="base_nl">Netherlands base overlay</string>
@@ -2047,9 +2064,12 @@
     <string name="common_signin_button_text_long">Sign in with Google</string>
     <string name="compass">Compass</string>
     <string name="confirm_button">Подтвердить</string>
-    <string name="confirm_point_message">Lat: %1$.5f, Lon: %2$.5f</string>
-    <string name="confirm_point_title">Отправить точку?</string>
+    <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
+    <string name="confirm_point_direction">Направление: %1$s</string>
+    <string name="confirm_point_title">Отправить данные оператору?</string>
+    <string name="confirm_point_type">Тип: %1$s</string>
     <string name="cyclemap">Cycle Map</string>
+    <string name="direction_dialog_title">Направление движения</string>
     <string description="Screen reader announcement for when a checkbox is on error. [CHAR LIMIT=NONE]" name="error_a11y_label">
     Error: invalid
   </string>
@@ -2101,7 +2121,7 @@
     <string name="mapnik" translatable="false">Mapnik</string>
     <string name="mapquest_aerial">Mapquest Aerial</string>
     <string name="mapquest_osm">Mapquest</string>
-    <string name="mark_point_button">Отметить точку</string>
+    <string name="mark_point_button">Отправить точку</string>
     <string name="material_clock_display_divider" translatable="false">:</string>
     <string description="Description for the toggle to choose between AM and PM [CHAR_LIMIT=NONE]" name="material_clock_toggle_content_description">Select AM or PM</string>
     <string description="Spoken suffix for an hour in the 24-hour clock [CHAR_LIMIT=10]" name="material_hour_24h_suffix"><ns2:g id="number">%1$s</ns2:g> hours</string>
@@ -2196,6 +2216,9 @@
     <string name="notification_channel_name">Отслеживание местоположения</string>
     <string name="notification_text">Отслеживание местоположения выполняется в фоне</string>
     <string name="notification_title">Operator Tracker активен</string>
+    <string name="object_type_dialog_title">Тип объекта</string>
+    <string name="object_type_quad">⬡ КВАДРИК</string>
+    <string name="object_type_uav">✈ БЕСПИЛОТНИК</string>
     <string name="offline">Offline mode</string>
     <string name="password_hint">Пароль</string>
     <string name="password_toggle_content_description">Show password</string>
@@ -2206,6 +2229,10 @@
     <string name="point_send_error">Не удалось отправить точку</string>
     <string name="point_sent_toast">Точка отправлена оператору</string>
     <string name="public_transport">Public transport</string>
+    <string name="queue_empty">Очередь пуста</string>
+    <string name="queue_item_format">%1$s%2$s | %3$s | %4$s</string>
+    <string name="queue_screen_title">Очередь точек (%1$d)</string>
+    <string name="queue_sync_now_button">Синхронизировать сейчас</string>
     <string name="roads_nl">Netherlands roads overlay</string>
     <string name="samples">Samples</string>
     <string name="search_menu_title">Search</string>
@@ -2214,6 +2241,10 @@
   </string>
     <string description="Content description for the X button to clear text [CHAR_LIMIT=NONE]" name="searchview_clear_text_content_description">Clear text</string>
     <string description="Content description for the navigation button to return to the previous screen [CHAR_LIMIT=NONE]" name="searchview_navigation_content_description">Back</string>
+    <string name="send_button">✓ ОТПРАВИТЬ</string>
+    <string name="send_result_error">✗ Ошибка: %1$s</string>
+    <string name="send_result_offline">📦 Нет связи — точка сохранена локально</string>
+    <string name="send_result_online">✓ Точка отправлена оператору</string>
     <string name="set_mode_hide_me">hiding my current location</string>
     <string name="set_mode_offline">Set to offline mode</string>
     <string name="set_mode_online">Set to online mode</string>
@@ -2223,6 +2254,9 @@
     <string name="snapshot">Snapshot</string>
     <string name="states">States</string>
     <string name="status_bar_notification_info_overflow">999+</string>
+    <string name="status_offline">● ОФЛАЙН — точки сохраняются локально</string>
+    <string name="status_online">● ОНЛАЙН</string>
+    <string name="status_queue_count">| В очереди: %1$d</string>
     <string name="topo">Topographic</string>
     <string name="unknown">Unknown</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>

@@ -29,16 +29,27 @@ class AuthManager(context: Context) {
         return !isTokenExpired(token)
     }
 
+    /** Логин текущего пользователя из поля "sub" JWT-токена, для локального отображения. */
+    fun getUserLogin(): String? {
+        val token = getToken() ?: return null
+        return decodePayload(token)?.optString("sub")?.ifEmpty { null }
+    }
+
     private fun isTokenExpired(token: String): Boolean {
+        val payload = decodePayload(token) ?: return true
+        val exp = payload.optLong("exp", 0L)
+        val nowSeconds = System.currentTimeMillis() / 1000
+        return exp <= nowSeconds
+    }
+
+    private fun decodePayload(token: String): JSONObject? {
         return try {
             val parts = token.split(".")
-            if (parts.size < 2) return true
+            if (parts.size < 2) return null
             val payloadJson = String(Base64.getUrlDecoder().decode(parts[1]))
-            val exp = JSONObject(payloadJson).optLong("exp", 0L)
-            val nowSeconds = System.currentTimeMillis() / 1000
-            exp <= nowSeconds
+            JSONObject(payloadJson)
         } catch (e: Exception) {
-            true
+            null
         }
     }
 

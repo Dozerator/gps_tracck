@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"/c/Program Files/PostgreSQL/18/bin/psql.exe\" -U postgres -d operator_db -f \"d:/Work/Cowork/Develop/Operator/backend/migrations/001_add_object_type_direction.sql\")"
+    ]
+  }
+}

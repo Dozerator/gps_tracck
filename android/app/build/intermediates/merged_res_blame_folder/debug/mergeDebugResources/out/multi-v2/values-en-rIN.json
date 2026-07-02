@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.operator.app-mergeDebugResources-35:/values-en-rIN/values-en-rIN.xml",
+            "outputFile": "com.example.operator.app-mergeDebugResources-45:/values-en-rIN/values-en-rIN.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\obi\\.gradle\\caches\\transforms-4\\fb88f581d26d53fe5da6c004a42c9a02\\transformed\\appcompat-1.7.0\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\obi\\.gradle\\caches\\transforms-4\\2e7539b7d20be0c325f071265f3aa11d\\transformed\\appcompat-1.7.0\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\obi\\.gradle\\caches\\transforms-4\\1bfb95f0db18200d1b2418c3620c7f70\\transformed\\core-1.13.1\\res\\values-en-rIN\\values-en-rIN.xml",
+                    "source": "C:\\Users\\obi\\.gradle\\caches\\transforms-4\\7a3f4104257706e5eb34693c1fba5abf\\transformed\\core-1.13.1\\res\\values-en-rIN\\values-en-rIN.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

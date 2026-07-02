@@ -1,44 +1,52 @@
 package com.example.operator.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.operator.OperatorApp
 import com.example.operator.R
-import com.example.operator.auth.AuthManager
+import com.example.operator.data.repository.SendResult
 import com.example.operator.databinding.ActivityMainBinding
-import com.example.operator.model.LocationPointRequest
-import com.example.operator.network.RetrofitClient
+import com.example.operator.databinding.DialogConfirmBinding
+import com.example.operator.databinding.DialogDirectionBinding
+import com.example.operator.databinding.DialogObjectTypeBinding
+import com.example.operator.model.Direction
+import com.example.operator.model.ObjectType
 import com.example.operator.service.LocationService
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var authManager: AuthManager
+    private val markPointViewModel: MarkPointViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels {
+        MainViewModel.Factory((application as OperatorApp).locationRepository)
+    }
 
     private var userLocationMarker: Marker? = null
     private var pendingPointMarker: Marker? = null
     private var lastKnownLocation: Location? = null
+    private var pendingSendObjectType: ObjectType? = null
 
     private val foregroundLocationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -72,14 +80,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        authManager = AuthManager(this)
-
         setupMap()
         binding.markPointButton.setOnClickListener { onMarkPointClicked() }
+        binding.statusBar.setOnClickListener {
+            startActivity(Intent(this, QueueActivity::class.java))
+        }
 
         requestNotificationPermissionIfNeeded()
         requestForegroundPermissionsIfNeeded()
         observeLocationUpdates()
+        observeSyncStatus()
     }
 
     private fun setupMap() {
@@ -169,8 +179,10 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        markPointViewModel.reset()
+        markPointViewModel.location = location
         showPendingMarker(location)
-        showConfirmDialog(location)
+        showObjectTypeDialog()
     }
 
     private fun showPendingMarker(location: Location) {
@@ -188,57 +200,176 @@ class MainActivity : AppCompatActivity() {
         binding.mapView.invalidate()
     }
 
-    private fun showConfirmDialog(location: Location) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null)
-        dialogView.findViewById<TextView>(R.id.dialogCoordinates).text =
-            getString(R.string.confirm_point_message, location.latitude, location.longitude)
-
-        AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton(R.string.confirm_button) { dialog, _ ->
-                sendLocationPoint(location)
-                dialog.dismiss()
-            }
-            .setNegativeButton(R.string.cancel_button) { dialog, _ ->
-                pendingPointMarker?.let { binding.mapView.overlays.remove(it) }
-                pendingPointMarker = null
-                binding.mapView.invalidate()
-                dialog.dismiss()
-            }
+    // Шаг 1: выбор типа объекта.
+    private fun showObjectTypeDialog() {
+        val dialogBinding = DialogObjectTypeBinding.inflate(LayoutInflater.from(this))
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
             .setCancelable(false)
-            .show()
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogBinding.uavButton.setOnClickListener {
+            markPointViewModel.objectType = ObjectType.UAV
+            dialog.dismiss()
+            showDirectionDialog()
+        }
+        dialogBinding.quadButton.setOnClickListener {
+            markPointViewModel.objectType = ObjectType.QUAD
+            dialog.dismiss()
+            showDirectionDialog()
+        }
+        dialogBinding.objectTypeCancelButton.setOnClickListener {
+            dialog.dismiss()
+            cancelMarking()
+        }
+        dialog.show()
     }
 
-    private fun sendLocationPoint(location: Location) {
-        val token = authManager.getToken() ?: return
-        val timestamp = ISO_FORMAT.format(java.util.Date(location.time))
+    // Шаг 2: выбор направления движения (крестообразная сетка 3x3).
+    private fun showDirectionDialog() {
+        val dialogBinding = DialogDirectionBinding.inflate(LayoutInflater.from(this))
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
+        val chooseDirection: (Direction) -> Unit = { direction ->
+            markPointViewModel.direction = direction
+            dialog.dismiss()
+            showFinalConfirmDialog()
+        }
+        dialogBinding.northButton.setOnClickListener { chooseDirection(Direction.NORTH) }
+        dialogBinding.southButton.setOnClickListener { chooseDirection(Direction.SOUTH) }
+        dialogBinding.eastButton.setOnClickListener { chooseDirection(Direction.EAST) }
+        dialogBinding.westButton.setOnClickListener { chooseDirection(Direction.WEST) }
+
+        dialogBinding.directionBackButton.setOnClickListener {
+            dialog.dismiss()
+            showObjectTypeDialog()
+        }
+        dialogBinding.directionCancelButton.setOnClickListener {
+            dialog.dismiss()
+            cancelMarking()
+        }
+        dialog.show()
+    }
+
+    // Шаг 3: подтверждение и отправка данных оператору.
+    private fun showFinalConfirmDialog() {
+        val location = markPointViewModel.location ?: return
+        val objectType = markPointViewModel.objectType ?: return
+        val direction = markPointViewModel.direction ?: return
+
+        val dialogBinding = DialogConfirmBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.dialogTypeLine.text = getString(R.string.confirm_point_type, objectType.label)
+        dialogBinding.dialogDirectionLine.text =
+            getString(R.string.confirm_point_direction, "${direction.arrow} ${direction.label}")
+        dialogBinding.dialogCoordinates.text =
+            getString(R.string.confirm_point_coordinates, location.latitude, location.longitude)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogBinding.confirmSendButton.setOnClickListener {
+            dialog.dismiss()
+            sendLocationPoint(location, objectType, direction)
+        }
+        dialogBinding.confirmCancelButton.setOnClickListener {
+            dialog.dismiss()
+            cancelMarking()
+        }
+        dialog.show()
+    }
+
+    private fun cancelMarking() {
+        pendingPointMarker?.let { binding.mapView.overlays.remove(it) }
+        pendingPointMarker = null
+        binding.mapView.invalidate()
+        markPointViewModel.reset()
+    }
+
+    // Отправка идёт через MainViewModel/LocationRepository: онлайн — сразу на сервер,
+    // офлайн (или ошибка сети) — в локальную очередь Room с последующей автосинхронизацией.
+    private fun sendLocationPoint(location: Location, objectType: ObjectType, direction: Direction) {
+        pendingSendObjectType = objectType
+        mainViewModel.sendPoint(
+            lat = location.latitude,
+            lon = location.longitude,
+            accuracy = location.accuracy,
+            timestampMillis = location.time,
+            objectType = objectType,
+            direction = direction
+        )
+        markPointViewModel.reset()
+    }
+
+    private fun markPendingPointAsSent(objectType: ObjectType) {
+        val iconRes = if (objectType == ObjectType.UAV) R.drawable.ic_marker_uav else R.drawable.ic_marker_quad
+        pendingPointMarker?.icon = ContextCompat.getDrawable(this, iconRes)
+        binding.mapView.invalidate()
+    }
+
+    // Статус сети, размер локальной очереди и результат последней отправки.
+    private fun observeSyncStatus() {
         lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.apiService.sendLocationPoint(
-                    "Bearer $token",
-                    LocationPointRequest(
-                        lat = location.latitude,
-                        lon = location.longitude,
-                        accuracy = location.accuracy,
-                        timestamp = timestamp
-                    )
-                )
-                if (response.isSuccessful) {
-                    markPendingPointAsSent()
-                    Toast.makeText(this@MainActivity, R.string.point_sent_toast, Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@MainActivity, R.string.point_send_error, Toast.LENGTH_SHORT).show()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    mainViewModel.isOnline.collect { online ->
+                        if (online) {
+                            binding.statusBar.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.status_online))
+                            binding.statusText.text = getString(R.string.status_online)
+                            delay(3000)
+                            if (mainViewModel.pendingCount.value == 0) {
+                                binding.statusBar.visibility = View.GONE
+                            }
+                        } else {
+                            binding.statusBar.visibility = View.VISIBLE
+                            binding.statusBar.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.status_offline))
+                            binding.statusText.text = getString(R.string.status_offline)
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, R.string.point_send_error, Toast.LENGTH_SHORT).show()
+                launch {
+                    mainViewModel.pendingCount.collect { count ->
+                        if (count > 0) {
+                            binding.statusBar.visibility = View.VISIBLE
+                            binding.queueCount.text = getString(R.string.status_queue_count, count)
+                        } else {
+                            binding.queueCount.text = ""
+                        }
+                    }
+                }
+                launch {
+                    mainViewModel.sendResult.collect { result ->
+                        when (result) {
+                            is SendResult.SentOnline -> {
+                                pendingSendObjectType?.let { markPendingPointAsSent(it) }
+                                showSnackbar(getString(R.string.send_result_online), R.color.status_online)
+                            }
+                            is SendResult.SavedOffline -> {
+                                pendingSendObjectType?.let { markPendingPointAsSent(it) }
+                                showSnackbar(getString(R.string.send_result_offline), R.color.status_queued)
+                            }
+                            is SendResult.Error -> {
+                                showSnackbar(getString(R.string.send_result_error, result.message), R.color.status_offline)
+                            }
+                        }
+                        pendingSendObjectType = null
+                    }
+                }
             }
         }
     }
 
-    private fun markPendingPointAsSent() {
-        pendingPointMarker?.icon = ContextCompat.getDrawable(this, R.drawable.ic_marker_green)
-        binding.mapView.invalidate()
+    private fun showSnackbar(message: String, colorRes: Int) {
+        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+        snackbar.view.setBackgroundColor(ContextCompat.getColor(this, colorRes))
+        snackbar.show()
     }
 
     override fun onResume() {
@@ -254,9 +385,5 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val DEFAULT_LAT = 55.7558
         private const val DEFAULT_LON = 37.6173
-
-        private val ISO_FORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }
     }
 }

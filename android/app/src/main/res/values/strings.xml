@@ -8,13 +8,24 @@
     <string name="login_error">Неверный логин или пароль</string>
     <string name="login_network_error">Ошибка сети. Проверьте подключение</string>
 
-    <string name="mark_point_button">Отметить точку</string>
-    <string name="confirm_point_title">Отправить точку?</string>
-    <string name="confirm_point_message">Lat: %1$.5f, Lon: %2$.5f</string>
+    <string name="mark_point_button">Отправить точку</string>
     <string name="confirm_button">Подтвердить</string>
     <string name="cancel_button">Отмена</string>
+    <string name="back_button">Назад</string>
     <string name="point_sent_toast">Точка отправлена оператору</string>
     <string name="point_send_error">Не удалось отправить точку</string>
+
+    <string name="object_type_dialog_title">Тип объекта</string>
+    <string name="object_type_uav">✈ БЕСПИЛОТНИК</string>
+    <string name="object_type_quad">⬡ КВАДРИК</string>
+
+    <string name="direction_dialog_title">Направление движения</string>
+
+    <string name="confirm_point_title">Отправить данные оператору?</string>
+    <string name="confirm_point_type">Тип: %1$s</string>
+    <string name="confirm_point_direction">Направление: %1$s</string>
+    <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
+    <string name="send_button">✓ ОТПРАВИТЬ</string>
 
     <string name="location_permission_rationale">Приложению требуется доступ к геолокации, чтобы отображать ваше местоположение на карте оператора и отправлять отмеченные точки.</string>
     <string name="background_location_rationale">Для отслеживания местоположения в фоне разрешите доступ к геолокации всегда ("Разрешать всегда") в настройках приложения.</string>
@@ -22,4 +33,16 @@
     <string name="notification_channel_name">Отслеживание местоположения</string>
     <string name="notification_title">Operator Tracker активен</string>
     <string name="notification_text">Отслеживание местоположения выполняется в фоне</string>
+
+    <string name="status_online">● ОНЛАЙН</string>
+    <string name="status_offline">● ОФЛАЙН — точки сохраняются локально</string>
+    <string name="status_queue_count">| В очереди: %1$d</string>
+    <string name="send_result_online">✓ Точка отправлена оператору</string>
+    <string name="send_result_offline">📦 Нет связи — точка сохранена локально</string>
+    <string name="send_result_error">✗ Ошибка: %1$s</string>
+
+    <string name="queue_screen_title">Очередь точек (%1$d)</string>
+    <string name="queue_sync_now_button">Синхронизировать сейчас</string>
+    <string name="queue_empty">Очередь пуста</string>
+    <string name="queue_item_format">%1$s%2$s | %3$s | %4$s</string>
 </resources>

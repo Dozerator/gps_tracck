@@ -22,6 +22,8 @@ async def create_point(
         lon=payload.lon,
         accuracy=payload.accuracy,
         timestamp=payload.timestamp,
+        object_type=payload.object_type,
+        direction=payload.direction,
     )
     db.add(point)
     db.commit()
@@ -34,6 +36,8 @@ async def create_point(
             "lat": point.lat,
             "lon": point.lon,
             "accuracy": point.accuracy,
+            "object_type": point.object_type,
+            "direction": point.direction,
             "timestamp": point.timestamp.isoformat(),
         }
     )

@@ -1,42 +1,78 @@
 [
     {
-        "merged": "com.example.operator.app-debug-37:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.example.operator.app-main-39:/drawable/ic_launcher_background.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.example.operator.app-main-39:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.example.operator.app-debug-47:/layout_activity_login.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/activity_login.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.example.operator.app-main-39:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_green.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_marker_green.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/layout_activity_main.xml.flat",
-        "source": "com.example.operator.app-main-39:/layout/activity_main.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.example.operator.app-main-39:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.example.operator.app-debug-47:/layout_dialog_confirm.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/dialog_confirm.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/drawable_ic_dot_blue.xml.flat",
-        "source": "com.example.operator.app-main-39:/drawable/ic_dot_blue.xml"
+        "merged": "com.example.operator.app-debug-47:/layout_activity_main.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/activity_main.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/drawable_ic_marker_blue.xml.flat",
-        "source": "com.example.operator.app-main-39:/drawable/ic_marker_blue.xml"
+        "merged": "com.example.operator.app-debug-47:/layout_item_queue_point.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/item_queue_point.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/layout_activity_login.xml.flat",
-        "source": "com.example.operator.app-main-39:/layout/activity_login.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_blue.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_marker_blue.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/layout_dialog_confirm.xml.flat",
-        "source": "com.example.operator.app-main-39:/layout/dialog_confirm.xml"
+        "merged": "com.example.operator.app-debug-47:/layout_dialog_direction.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/dialog_direction.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-37:/drawable_ic_marker_green.xml.flat",
-        "source": "com.example.operator.app-main-39:/drawable/ic_marker_green.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_uav.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_marker_uav.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.operator.app-main-49:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_arrow_back.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_arrow_back.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_dot_blue.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_dot_blue.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/drawable_bg_dialog_card.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/bg_dialog_card.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/layout_dialog_object_type.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/dialog_object_type.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/color_direction_button_bg_selector.xml.flat",
+        "source": "com.example.operator.app-main-49:/color/direction_button_bg_selector.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/layout_activity_queue.xml.flat",
+        "source": "com.example.operator.app-main-49:/layout/activity_queue.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_quad.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_marker_quad.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.operator.app-main-49:/mipmap-anydpi-v26/ic_launcher_round.xml"
     }
 ]

@@ -45,12 +45,11 @@
 
   #points-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
   #points-list li {
-    padding: 10px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 13px;
+    padding: 10px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+    font-size: 13px; display: flex; align-items: center; gap: 8px; color: #2c3e50;
   }
   #points-list li:hover { background: #f7f7f7; }
-  #points-list li .user { font-weight: 600; color: #2c3e50; }
-  #points-list li .coords { color: #555; }
-  #points-list li .time { color: #999; font-size: 11px; }
+  #points-list li .entry-icon { font-size: 16px; flex-shrink: 0; }
   #points-list .empty { color: #999; text-align: center; padding: 24px 16px; cursor: default; }
 
   #toast-container {
@@ -69,6 +68,9 @@
     85% { opacity: 1; }
     100% { opacity: 0; }
   }
+
+  .popup-card { font-size: 13px; line-height: 1.6; }
+  .popup-card .popup-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -97,13 +99,93 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  const redIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/images/marker-shadow.png',
-    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-  });
+  // --- SVG-иконки объектов (вид сверху) ---
+  const UAV_SVG = `
+    <svg width="32" height="32" viewBox="0 0 32 32">
+      <ellipse cx="16" cy="16" rx="3" ry="12" fill="#FF4444"/>
+      <ellipse cx="16" cy="14" rx="14" ry="3" fill="#FF4444"/>
+      <ellipse cx="16" cy="25" rx="6" ry="2" fill="#FF4444"/>
+    </svg>`;
 
-  const markers = [];
+  const QUAD_SVG = `
+    <svg width="36" height="36" viewBox="0 0 36 36">
+      <rect x="13" y="13" width="10" height="10" rx="2" fill="#4444FF"/>
+      <line x1="18" y1="18" x2="5" y2="5" stroke="#4444FF" stroke-width="2"/>
+      <line x1="18" y1="18" x2="31" y2="5" stroke="#4444FF" stroke-width="2"/>
+      <line x1="18" y1="18" x2="5" y2="31" stroke="#4444FF" stroke-width="2"/>
+      <line x1="18" y1="18" x2="31" y2="31" stroke="#4444FF" stroke-width="2"/>
+      <circle cx="5" cy="5" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
+      <circle cx="31" cy="5" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
+      <circle cx="5" cy="31" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
+      <circle cx="31" cy="31" r="4" fill="none" stroke="#4444FF" stroke-width="2"/>
+    </svg>`;
+
+  const OBJECT_META = {
+    UAV:  { label: 'БЕСПИЛОТНИК', icon: '✈', color: '#FF4444', svg: UAV_SVG, size: [32, 32] },
+    QUAD: { label: 'КВАДРИК',     icon: '⬡', color: '#4444FF', svg: QUAD_SVG, size: [36, 36] }
+  };
+
+  const DIRECTION_META = {
+    NORTH: { label: 'СЕВЕР', arrow: '↑', dLat: 1,  dLon: 0,  rotation: 0 },
+    SOUTH: { label: 'ЮГ',    arrow: '↓', dLat: -1, dLon: 0,  rotation: 180 },
+    EAST:  { label: 'ВОСТОК', arrow: '→', dLat: 0,  dLon: 1,  rotation: 90 },
+    WEST:  { label: 'ЗАПАД', arrow: '←', dLat: 0,  dLon: -1, rotation: 270 }
+  };
+
+  function objectMeta(objectType) {
+    return OBJECT_META[objectType] || OBJECT_META.UAV;
+  }
+
+  function directionMeta(direction) {
+    return DIRECTION_META[direction] || DIRECTION_META.NORTH;
+  }
+
+  function createObjectIcon(objectType) {
+    const meta = objectMeta(objectType);
+    return L.divIcon({
+      className: '',
+      html: meta.svg,
+      iconSize: meta.size,
+      iconAnchor: [meta.size[0] / 2, meta.size[1] / 2],
+      popupAnchor: [0, -meta.size[1] / 2]
+    });
+  }
+
+  // Конечная точка стрелки направления (~75 метров от маркера).
+  function getArrowEnd(lat, lon, direction, distanceMeters = 75) {
+    const R = 6371000;
+    const meta = directionMeta(direction);
+
+    const endLat = lat + (meta.dLat * distanceMeters / R) * (180 / Math.PI);
+    const endLon = lon + (meta.dLon * distanceMeters / R) *
+                   (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
+
+    return [endLat, endLon];
+  }
+
+  function createArrowHeadIcon(color, rotationDeg) {
+    return L.divIcon({
+      className: '',
+      html: `<div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid ${color};transform:rotate(${rotationDeg}deg);transform-origin:center;"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+  }
+
+  function drawDirectionArrow(lat, lon, direction, color) {
+    const meta = directionMeta(direction);
+    const end = getArrowEnd(lat, lon, direction);
+
+    const line = L.polyline([[lat, lon], end], { color, weight: 3 }).addTo(map);
+    const arrowHead = L.marker(end, {
+      icon: createArrowHeadIcon(color, meta.rotation),
+      interactive: false
+    }).addTo(map);
+
+    return { line, arrowHead };
+  }
+
+  const points = [];
   const pointsListEl = document.getElementById('points-list');
   const pointsCountEl = document.getElementById('points-count');
   const sidebar = document.getElementById('sidebar');
@@ -116,16 +198,23 @@
   toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
 
   clearBtn.addEventListener('click', () => {
-    markers.forEach(m => map.removeLayer(m));
-    markers.length = 0;
+    points.forEach(({ marker, line, arrowHead }) => {
+      map.removeLayer(marker);
+      map.removeLayer(line);
+      map.removeLayer(arrowHead);
+    });
+    points.length = 0;
     pointsListEl.innerHTML = '<li class="empty">Пока нет точек</li>';
     pointsCountEl.textContent = '0';
   });
 
-  function formatTime(isoString) {
+  function formatClock(isoString, withSeconds = false) {
     try {
       const d = new Date(isoString);
-      return d.toLocaleString('ru-RU');
+      const opts = withSeconds
+        ? { hour: '2-digit', minute: '2-digit', second: '2-digit' }
+        : { hour: '2-digit', minute: '2-digit' };
+      return d.toLocaleTimeString('ru-RU', opts);
     } catch (e) {
       return isoString;
     }
@@ -143,34 +232,45 @@
     const emptyItem = pointsListEl.querySelector('.empty');
     if (emptyItem) emptyItem.remove();
 
+    const meta = objectMeta(data.object_type);
+    const dirMeta = directionMeta(data.direction);
+
     const li = document.createElement('li');
     li.innerHTML = `
-      <div class="user">${data.user}</div>
-      <div class="coords">Lat: ${data.lat.toFixed(5)}, Lon: ${data.lon.toFixed(5)}</div>
-      <div class="time">${formatTime(data.timestamp)}</div>
+      <span class="entry-icon">${meta.icon}</span>
+      <span>${formatClock(data.timestamp)} | ${dirMeta.label}${dirMeta.arrow} | ${data.user}</span>
     `;
     li.addEventListener('click', () => {
       map.setView([data.lat, data.lon], 16);
       marker.openPopup();
     });
     pointsListEl.prepend(li);
-    pointsCountEl.textContent = markers.length.toString();
+    pointsCountEl.textContent = points.length.toString();
   }
 
   function handleNewPoint(data) {
-    const marker = L.marker([data.lat, data.lon], { icon: redIcon }).addTo(map);
+    const meta = objectMeta(data.object_type);
+    const dirMeta = directionMeta(data.direction);
+
+    const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type) }).addTo(map);
     marker.bindPopup(`
-      <b>Пользователь:</b> ${data.user}<br>
-      <b>Координаты:</b> ${data.lat.toFixed(5)}, ${data.lon.toFixed(5)}<br>
-      <b>Время:</b> ${formatTime(data.timestamp)}
+      <div class="popup-card">
+        <div class="popup-title">${meta.icon} ${meta.label}</div>
+        Направление: ${dirMeta.arrow} ${dirMeta.label}<br>
+        Координаты: ${data.lat.toFixed(5)}, ${data.lon.toFixed(5)}<br>
+        Время: ${formatClock(data.timestamp, true)}<br>
+        Пользователь: ${data.user}
+      </div>
     `);
-    markers.push(marker);
+
+    const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction, meta.color);
+    points.push({ marker, line, arrowHead });
 
     map.setView([data.lat, data.lon], 15);
     marker.openPopup();
 
     addPointToSidebar(data, marker);
-    showToast(`Новая точка от ${data.user} в ${formatTime(data.timestamp)}`);
+    showToast(`Новая точка от ${data.user} в ${formatClock(data.timestamp)}`);
   }
 
   function connectWebSocket() {
@@ -185,7 +285,7 @@
     ws.onclose = () => {
       statusEl.classList.remove('connected');
       statusTextEl.textContent = 'Переподключение...';
-      setTimeout(connectWebSocket, 2000);
+      setTimeout(connectWebSocket, 5000);
     };
 
     ws.onerror = () => ws.close();

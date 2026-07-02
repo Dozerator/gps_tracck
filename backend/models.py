@@ -27,5 +27,7 @@ class LocationPoint(Base):
     accuracy = Column(Float, nullable=True)
     timestamp = Column(DateTime(timezone=True), nullable=False)
     sent_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    object_type = Column(String(10), nullable=False)
+    direction = Column(String(10), nullable=False)
 
     user = relationship("User", back_populates="points")

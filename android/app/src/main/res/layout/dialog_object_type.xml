@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_card"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/objectTypeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:text="@string/object_type_dialog_title"
+        android:textColor="@color/dialog_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/uavButton"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/object_type_uav"
+        android:textColor="@color/dialog_text"
+        android:textSize="18sp"
+        app:backgroundTint="@color/direction_button_bg_selector"
+        app:cornerRadius="14dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/quadButton"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/object_type_quad"
+        android:textColor="@color/dialog_text"
+        android:textSize="18sp"
+        app:backgroundTint="@color/direction_button_bg_selector"
+        app:cornerRadius="14dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/objectTypeCancelButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel_button"
+        android:textColor="@color/dialog_text_secondary" />
+
+</LinearLayout>

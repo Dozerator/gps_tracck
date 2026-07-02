@@ -19,14 +19,16 @@ CREATE TABLE IF NOT EXISTS location_points (
     lon DOUBLE PRECISION NOT NULL,
     accuracy DOUBLE PRECISION,
     timestamp TIMESTAMPTZ NOT NULL,
-    sent_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    sent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    object_type VARCHAR(10) NOT NULL,  -- 'UAV' или 'QUAD'
+    direction VARCHAR(10) NOT NULL     -- 'NORTH', 'SOUTH', 'EAST' или 'WEST'
 );
 
 CREATE INDEX IF NOT EXISTS idx_location_points_user_id ON location_points(user_id);
 CREATE INDEX IF NOT EXISTS idx_location_points_timestamp ON location_points(timestamp);
 
 -- Тестовый пользователь: login = admin, password = admin123
--- Хеш сгенерирован через bcrypt (passlib), 12 раундов
+-- Хеш сгенерирован напрямую через bcrypt (см. backend/auth.py)
 INSERT INTO users (login, password_hash)
 VALUES ('admin', '$2b$12$83KdOb.mHvuYG0qKxETkk.lKy0b0V1MYJA3mnjAIyZft1gZ1cs/qC')
 ON CONFLICT (login) DO NOTHING;

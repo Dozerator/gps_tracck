@@ -17,7 +17,9 @@ data class LocationPointRequest(
     val lat: Double,
     val lon: Double,
     val accuracy: Float?,
-    val timestamp: String
+    val timestamp: String,
+    @SerializedName("object_type") val objectType: String,
+    val direction: String
 )
 
 data class LocationPointResponse(
@@ -27,5 +29,7 @@ data class LocationPointResponse(
     val lon: Double,
     val accuracy: Float?,
     val timestamp: String,
-    @SerializedName("sent_at") val sentAt: String
+    @SerializedName("sent_at") val sentAt: String,
+    @SerializedName("object_type") val objectType: String,
+    val direction: String
 )

@@ -1,6 +1,10 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
+
+ObjectType = Literal["UAV", "QUAD"]
+Direction = Literal["NORTH", "SOUTH", "EAST", "WEST"]
 
 
 class LoginRequest(BaseModel):
@@ -19,6 +23,8 @@ class LocationPointCreate(BaseModel):
     lon: float = Field(..., ge=-180, le=180)
     accuracy: float | None = None
     timestamp: datetime
+    object_type: ObjectType
+    direction: Direction
 
 
 class LocationPointResponse(BaseModel):
@@ -29,6 +35,8 @@ class LocationPointResponse(BaseModel):
     accuracy: float | None
     timestamp: datetime
     sent_at: datetime
+    object_type: ObjectType
+    direction: Direction
 
     class Config:
         from_attributes = True

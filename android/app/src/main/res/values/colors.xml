@@ -4,6 +4,20 @@
     <color name="accent">#2ECC71</color>
     <color name="marker_blue">#1565C0</color>
     <color name="marker_green">#2ECC71</color>
+    <color name="marker_uav">#FF4444</color>
+    <color name="marker_quad">#4444FF</color>
     <color name="background">#FFFFFF</color>
     <color name="text_primary">#212121</color>
+
+    <!-- Тёмная тема диалогов отметки точки -->
+    <color name="dialog_background">#1C1C1E</color>
+    <color name="dialog_text">#F2F2F7</color>
+    <color name="dialog_text_secondary">#9A9A9E</color>
+    <color name="accent_orange">#FF6B00</color>
+    <color name="direction_button_bg">#2C2C2E</color>
+
+    <!-- Статус сети / очереди -->
+    <color name="status_online">#2E7D32</color>
+    <color name="status_offline">#C62828</color>
+    <color name="status_queued">#F57F17</color>
 </resources>

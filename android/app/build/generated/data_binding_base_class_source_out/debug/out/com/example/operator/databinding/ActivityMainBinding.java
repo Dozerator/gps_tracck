@@ -4,7 +4,9 @@ package com.example.operator.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,13 +32,26 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final MaterialButton markPointButton;
 
+  @NonNull
+  public final TextView queueCount;
+
+  @NonNull
+  public final LinearLayout statusBar;
+
+  @NonNull
+  public final TextView statusText;
+
   private ActivityMainBinding(@NonNull ConstraintLayout rootView,
       @NonNull ProgressBar locationProgress, @NonNull MapView mapView,
-      @NonNull MaterialButton markPointButton) {
+      @NonNull MaterialButton markPointButton, @NonNull TextView queueCount,
+      @NonNull LinearLayout statusBar, @NonNull TextView statusText) {
     this.rootView = rootView;
     this.locationProgress = locationProgress;
     this.mapView = mapView;
     this.markPointButton = markPointButton;
+    this.queueCount = queueCount;
+    this.statusBar = statusBar;
+    this.statusText = statusText;
   }
 
   @Override
@@ -84,8 +99,26 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.queueCount;
+      TextView queueCount = ViewBindings.findChildViewById(rootView, id);
+      if (queueCount == null) {
+        break missingId;
+      }
+
+      id = R.id.statusBar;
+      LinearLayout statusBar = ViewBindings.findChildViewById(rootView, id);
+      if (statusBar == null) {
+        break missingId;
+      }
+
+      id = R.id.statusText;
+      TextView statusText = ViewBindings.findChildViewById(rootView, id);
+      if (statusText == null) {
+        break missingId;
+      }
+
       return new ActivityMainBinding((ConstraintLayout) rootView, locationProgress, mapView,
-          markPointButton);
+          markPointButton, queueCount, statusBar, statusText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

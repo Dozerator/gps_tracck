@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.example.operator.R;
+import com.google.android.material.button.MaterialButton;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
@@ -20,16 +21,34 @@ public final class DialogConfirmBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final MaterialButton confirmCancelButton;
+
+  @NonNull
+  public final MaterialButton confirmSendButton;
+
+  @NonNull
   public final TextView dialogCoordinates;
+
+  @NonNull
+  public final TextView dialogDirectionLine;
 
   @NonNull
   public final TextView dialogTitle;
 
-  private DialogConfirmBinding(@NonNull LinearLayout rootView, @NonNull TextView dialogCoordinates,
-      @NonNull TextView dialogTitle) {
+  @NonNull
+  public final TextView dialogTypeLine;
+
+  private DialogConfirmBinding(@NonNull LinearLayout rootView,
+      @NonNull MaterialButton confirmCancelButton, @NonNull MaterialButton confirmSendButton,
+      @NonNull TextView dialogCoordinates, @NonNull TextView dialogDirectionLine,
+      @NonNull TextView dialogTitle, @NonNull TextView dialogTypeLine) {
     this.rootView = rootView;
+    this.confirmCancelButton = confirmCancelButton;
+    this.confirmSendButton = confirmSendButton;
     this.dialogCoordinates = dialogCoordinates;
+    this.dialogDirectionLine = dialogDirectionLine;
     this.dialogTitle = dialogTitle;
+    this.dialogTypeLine = dialogTypeLine;
   }
 
   @Override
@@ -59,9 +78,27 @@ public final class DialogConfirmBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.confirmCancelButton;
+      MaterialButton confirmCancelButton = ViewBindings.findChildViewById(rootView, id);
+      if (confirmCancelButton == null) {
+        break missingId;
+      }
+
+      id = R.id.confirmSendButton;
+      MaterialButton confirmSendButton = ViewBindings.findChildViewById(rootView, id);
+      if (confirmSendButton == null) {
+        break missingId;
+      }
+
       id = R.id.dialogCoordinates;
       TextView dialogCoordinates = ViewBindings.findChildViewById(rootView, id);
       if (dialogCoordinates == null) {
+        break missingId;
+      }
+
+      id = R.id.dialogDirectionLine;
+      TextView dialogDirectionLine = ViewBindings.findChildViewById(rootView, id);
+      if (dialogDirectionLine == null) {
         break missingId;
       }
 
@@ -71,7 +108,14 @@ public final class DialogConfirmBinding implements ViewBinding {
         break missingId;
       }
 
-      return new DialogConfirmBinding((LinearLayout) rootView, dialogCoordinates, dialogTitle);
+      id = R.id.dialogTypeLine;
+      TextView dialogTypeLine = ViewBindings.findChildViewById(rootView, id);
+      if (dialogTypeLine == null) {
+        break missingId;
+      }
+
+      return new DialogConfirmBinding((LinearLayout) rootView, confirmCancelButton,
+          confirmSendButton, dialogCoordinates, dialogDirectionLine, dialogTitle, dialogTypeLine);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

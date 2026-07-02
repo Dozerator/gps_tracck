@@ -37,6 +37,10 @@
             android:name=".ui.MainActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.QueueActivity"
+            android:exported="false" />
+
         <service
             android:name=".service.LocationService"
             android:foregroundServiceType="location"
