@@ -1,94 +1,118 @@
 [
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_launcher_background.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_marker_blue.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_marker_blue.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/layout_activity_login.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/activity_login.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_green.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_marker_green.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_ic_arrow_up.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/ic_arrow_up.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_shape_quick_dir_pressed.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/shape_quick_dir_pressed.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/layout_dialog_confirm.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/dialog_confirm.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_main.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/layout_activity_main.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/activity_main.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_marker_green.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_marker_green.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/layout_item_queue_point.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/item_queue_point.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_bg_dialog_card.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\bg_dialog_card.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/layout_dialog_threat.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/dialog_threat.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_marker_uav.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_marker_uav.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_blue.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_marker_blue.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/animator_pulse_animation.xml.flat",
-        "source": "com.example.operator.app-main-49:/animator/pulse_animation.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_dialog_threat.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_threat.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/xml_network_security_config.xml.flat",
-        "source": "com.example.operator.app-main-49:/xml/network_security_config.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\color_direction_button_bg_selector.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\color\\direction_button_bg_selector.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/drawable_shape_quick_dir_default.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/shape_quick_dir_default.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_dot_blue.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_dot_blue.xml"
+    },
+    {
+        "merged": "com.example.operator.app-debug-47:/color_quick_dir_content_color.xml.flat",
+        "source": "com.example.operator.app-main-49:/color/quick_dir_content_color.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_dialog_object_type.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_object_type.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_dialog_compass.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_compass.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_activity_login.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_arrow_back.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_arrow_back.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\raw_server_cert.crt.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\raw\\server_cert.crt"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\drawable_ic_marker_quad.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\drawable\\ic_marker_quad.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\animator_pulse_animation.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\animator\\pulse_animation.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_dialog_confirm.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\dialog_confirm.xml"
+    },
+    {
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\xml_network_security_config.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\xml\\network_security_config.xml"
     },
     {
         "merged": "com.example.operator.app-debug-47:/layout_dialog_compass.xml.flat",
         "source": "com.example.operator.app-main-49:/layout/dialog_compass.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_uav.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_marker_uav.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_item_queue_point.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\item_queue_point.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.example.operator.app-main-49:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.example.operator.app-debug-47:/drawable_bg_quick_dir_button.xml.flat",
+        "source": "com.example.operator.app-main-49:/drawable/bg_quick_dir_button.xml"
     },
     {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_arrow_back.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_arrow_back.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_dot_blue.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_dot_blue.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/drawable_bg_dialog_card.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/bg_dialog_card.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/layout_dialog_object_type.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/dialog_object_type.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/color_direction_button_bg_selector.xml.flat",
-        "source": "com.example.operator.app-main-49:/color/direction_button_bg_selector.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/raw_server_cert.crt.flat",
-        "source": "com.example.operator.app-main-49:/raw/server_cert.crt"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/layout_activity_queue.xml.flat",
-        "source": "com.example.operator.app-main-49:/layout/activity_queue.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/drawable_ic_marker_quad.xml.flat",
-        "source": "com.example.operator.app-main-49:/drawable/ic_marker_quad.xml"
-    },
-    {
-        "merged": "com.example.operator.app-debug-47:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.example.operator.app-main-49:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-debug-47:\\layout_activity_queue.xml.flat",
+        "source": "C:\\Users\\obi\\.gradle\\daemon\\8.7\\com.example.operator.app-main-49:\\layout\\activity_queue.xml"
     }
 ]

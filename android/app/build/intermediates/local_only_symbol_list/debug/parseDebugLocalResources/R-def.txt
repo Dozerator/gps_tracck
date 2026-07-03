@@ -15,12 +15,15 @@ color marker_quad
 color marker_uav
 color primary
 color primary_dark
+color quick_dir_content_color
 color status_offline
 color status_online
 color status_queued
 color text_primary
 drawable bg_dialog_card
+drawable bg_quick_dir_button
 drawable ic_arrow_back
+drawable ic_arrow_up
 drawable ic_dot_blue
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -28,6 +31,8 @@ drawable ic_marker_blue
 drawable ic_marker_green
 drawable ic_marker_quad
 drawable ic_marker_uav
+drawable shape_quick_dir_default
+drawable shape_quick_dir_pressed
 id btnE
 id btnMinus
 id btnN

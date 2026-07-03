@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Обычное состояние — обводка (как OutlinedButton), нажатое — заливка оранжевым,
+     аналогично подсветке активного деления на самом круге компаса. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/shape_quick_dir_pressed" android:state_pressed="true" />
+    <item android:drawable="@drawable/shape_quick_dir_default" />
+</selector>
