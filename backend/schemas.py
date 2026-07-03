@@ -4,7 +4,6 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 ObjectType = Literal["UAV", "QUAD"]
-Direction = Literal["NORTH", "SOUTH", "EAST", "WEST"]
 ThreatLevel = Literal["OBSERVATION", "ATTENTION", "THREAT"]
 
 
@@ -25,7 +24,8 @@ class LocationPointCreate(BaseModel):
     accuracy: float | None = None
     timestamp: datetime
     object_type: ObjectType
-    direction: Direction
+    direction_degrees: int = Field(..., ge=0, le=359)
+    direction_label: str = Field(..., max_length=50)
     threat_level: ThreatLevel = "OBSERVATION"
 
 
@@ -38,7 +38,8 @@ class LocationPointResponse(BaseModel):
     timestamp: datetime
     sent_at: datetime
     object_type: ObjectType
-    direction: Direction
+    direction_degrees: int
+    direction_label: str
     threat_level: ThreatLevel
 
     class Config:

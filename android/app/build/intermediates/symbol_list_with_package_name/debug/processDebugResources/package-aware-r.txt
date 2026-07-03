@@ -3287,6 +3287,12 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnE
+id btnMinus
+id btnN
+id btnPlus
+id btnS
+id btnW
 id bubble_description
 id bubble_image
 id bubble_moreinfo
@@ -3315,6 +3321,10 @@ id clip_vertical
 id clockwise
 id closest
 id collapseActionView
+id compassBackButton
+id compassCancelButton
+id compassConfirmButton
+id compassView
 id compress
 id confirmCancelButton
 id confirmSendButton
@@ -3354,9 +3364,6 @@ id dialogTypeLine
 id dialog_button
 id dimensions
 id direct
-id directionBackButton
-id directionCancelButton
-id directionTitle
 id disableHome
 id disableIntraAutoTransition
 id disablePostScroll
@@ -3375,7 +3382,6 @@ id easeIn
 id easeInOut
 id easeOut
 id east
-id eastButton
 id edge
 id edit_query
 id edit_text_id
@@ -3534,7 +3540,6 @@ id noState
 id none
 id normal
 id north
-id northButton
 id notification_background
 id notification_main_column
 id notification_main_column_container
@@ -3634,7 +3639,6 @@ id snackbar_text
 id snap
 id snapMargins
 id south
-id southButton
 id spacer
 id special_effects_controller_view_tag
 id spline
@@ -3726,6 +3730,8 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tvAngle
+id tvDirectionLabel
 id uavButton
 id unchecked
 id uniform
@@ -3742,7 +3748,6 @@ id view_tree_view_model_store_owner
 id visible
 id visible_removing_fragment_view_tag
 id west
-id westButton
 id wide
 id withText
 id with_icon
@@ -3887,8 +3892,8 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout dialog_compass
 layout dialog_confirm
-layout dialog_direction
 layout dialog_object_type
 layout dialog_threat
 layout ime_base_split_test_activity
@@ -4043,6 +4048,8 @@ string common_open_on_phone
 string common_signin_button_text
 string common_signin_button_text_long
 string compass
+string compass_confirm_button
+string compass_degrees_format
 string confirm_button
 string confirm_point_coordinates
 string confirm_point_direction

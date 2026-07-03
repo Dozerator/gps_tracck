@@ -20,6 +20,7 @@
     <string name="object_type_quad">⬡ КВАДРИК</string>
 
     <string name="direction_dialog_title">Направление движения</string>
+    <string name="compass_degrees_format">%1$d°</string>
 
     <string name="threat_dialog_title">ОЦЕНИТЕ УГРОЗУ</string>
 
@@ -30,6 +31,7 @@
     <string name="confirm_point_threat">Угроза: %1$s %2$s</string>
     <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
     <string name="send_button">✓ ОТПРАВИТЬ</string>
+    <string name="compass_confirm_button">✓ ВЫБРАТЬ</string>
 
     <string name="location_permission_rationale">Приложению требуется доступ к геолокации, чтобы отображать ваше местоположение на карте оператора и отправлять отмеченные точки.</string>
     <string name="background_location_rationale">Для отслеживания местоположения в фоне разрешите доступ к геолокации всегда ("Разрешать всегда") в настройках приложения.</string>
@@ -48,5 +50,5 @@
     <string name="queue_screen_title">Очередь точек (%1$d)</string>
     <string name="queue_sync_now_button">Синхронизировать сейчас</string>
     <string name="queue_empty">Очередь пуста</string>
-    <string name="queue_item_format">%1$s%2$s | %3$s | %4$s</string>
+    <string name="queue_item_format">%1$s | %2$s | %3$s</string>
 </resources>

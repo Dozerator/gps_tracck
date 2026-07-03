@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.operator.auth.AuthManager
 import com.example.operator.data.local.dao.PendingPointDao
 import com.example.operator.data.local.entity.PendingPointEntity
-import com.example.operator.model.Direction
 import com.example.operator.model.LocationPointRequest
 import com.example.operator.model.ObjectType
 import com.example.operator.model.ThreatLevel
@@ -38,7 +37,8 @@ class LocationRepository(
         accuracy: Float,
         timestampMillis: Long,
         objectType: ObjectType,
-        direction: Direction,
+        directionDegrees: Int,
+        directionLabel: String,
         threatLevel: ThreatLevel = ThreatLevel.OBSERVATION
     ): SendResult {
         val token = authManager.getToken()
@@ -53,7 +53,8 @@ class LocationRepository(
                         accuracy = accuracy,
                         timestamp = isoUtc(timestampMillis),
                         objectType = objectType.apiValue,
-                        direction = direction.apiValue,
+                        directionDegrees = directionDegrees,
+                        directionLabel = directionLabel,
                         threatLevel = threatLevel.apiValue
                     )
                 )
@@ -61,17 +62,17 @@ class LocationRepository(
                     SendResult.SentOnline
                 } else {
                     // Сервер ответил ошибкой — не теряем точку, кладём в очередь.
-                    saveToQueue(lat, lon, accuracy, timestampMillis, objectType, direction, threatLevel)
+                    saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
                     SendResult.SavedOffline
                 }
             } catch (e: Exception) {
                 // Сеть считалась доступной, но запрос не прошёл — тоже в очередь.
-                saveToQueue(lat, lon, accuracy, timestampMillis, objectType, direction, threatLevel)
+                saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
                 SendResult.SavedOffline
             }
         }
 
-        saveToQueue(lat, lon, accuracy, timestampMillis, objectType, direction, threatLevel)
+        saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
         return SendResult.SavedOffline
     }
 
@@ -81,7 +82,8 @@ class LocationRepository(
         accuracy: Float,
         timestampMillis: Long,
         objectType: ObjectType,
-        direction: Direction,
+        directionDegrees: Int,
+        directionLabel: String,
         threatLevel: ThreatLevel
     ): Long {
         return dao.insert(
@@ -92,7 +94,8 @@ class LocationRepository(
                 userId = authManager.getUserLogin() ?: "",
                 timestamp = timestampMillis,
                 objectType = objectType.apiValue,
-                direction = direction.apiValue,
+                directionDegrees = directionDegrees,
+                directionLabel = directionLabel,
                 threatLevel = threatLevel.apiValue
             )
         )

@@ -102,6 +102,7 @@ fun PendingPointEntity.toRequest(): LocationPointRequest = LocationPointRequest(
     accuracy = accuracy,
     timestamp = isoUtc(timestamp),
     objectType = objectType,
-    direction = direction,
+    directionDegrees = directionDegrees,
+    directionLabel = directionLabel,
     threatLevel = threatLevel
 )

@@ -1,5 +1,5 @@
 // Визуальные и звуковые оповещения панели оператора по уровню угрозы.
-// Опирается на OBJECT_META / DIRECTION_META / THREAT_META и formatClock(),
+// Опирается на OBJECT_META / THREAT_META и formatClock(),
 // определённые в основном скрипте index.html (общая глобальная область
 // видимости classic-скриптов — порядок подключения см. в index.html).
 
@@ -89,7 +89,6 @@ class AlertManager {
 
   _showToast(data, level) {
     const objMeta = objectMeta(data.object_type);
-    const dirMeta = directionMeta(data.direction);
 
     const labels = {
       threat: '🔴 УГРОЗА',
@@ -111,7 +110,7 @@ class AlertManager {
         <span class="toast-close">✕</span>
       </div>
       <div class="toast-body">
-        <b>${objMeta.icon} ${data.object_type}</b> | ${dirMeta.arrow} ${dirMeta.label}
+        <b>${objMeta.icon} ${data.object_type}</b> | ${data.direction_label}
         <br>
         <small>👤 ${data.user} | 🕐 ${formatClock(data.timestamp, true)}</small>
       </div>

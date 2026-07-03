@@ -23,7 +23,8 @@ async def create_point(
         accuracy=payload.accuracy,
         timestamp=payload.timestamp,
         object_type=payload.object_type,
-        direction=payload.direction,
+        direction_degrees=payload.direction_degrees,
+        direction_label=payload.direction_label,
         threat_level=payload.threat_level,
     )
     db.add(point)
@@ -37,7 +38,8 @@ async def create_point(
         "lon": point.lon,
         "accuracy": point.accuracy,
         "object_type": point.object_type,
-        "direction": point.direction,
+        "direction_degrees": point.direction_degrees,
+        "direction_label": point.direction_label,
         "threat_level": point.threat_level,
         "timestamp": point.timestamp.isoformat(),
     }

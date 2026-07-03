@@ -205,13 +205,6 @@
     QUAD: { label: 'КВАДРИК',     icon: '⬡', svg: quadSvg, size: [36, 36] }
   };
 
-  const DIRECTION_META = {
-    NORTH: { label: 'СЕВЕР', arrow: '↑', dLat: 1,  dLon: 0,  rotation: 0 },
-    SOUTH: { label: 'ЮГ',    arrow: '↓', dLat: -1, dLon: 0,  rotation: 180 },
-    EAST:  { label: 'ВОСТОК', arrow: '→', dLat: 0,  dLon: 1,  rotation: 90 },
-    WEST:  { label: 'ЗАПАД', arrow: '←', dLat: 0,  dLon: -1, rotation: 270 }
-  };
-
   // Цвета — NATO threat color coding (зелёный/жёлтый/красный).
   const THREAT_META = {
     OBSERVATION: { label: 'НАБЛЮДЕНИЕ', icon: '🟢', color: '#4CAF50' },
@@ -221,10 +214,6 @@
 
   function objectMeta(objectType) {
     return OBJECT_META[objectType] || OBJECT_META.UAV;
-  }
-
-  function directionMeta(direction) {
-    return DIRECTION_META[direction] || DIRECTION_META.NORTH;
   }
 
   function threatMeta(threatLevel) {
@@ -243,13 +232,14 @@
     });
   }
 
-  // Конечная точка стрелки направления (~75 метров от маркера).
-  function getArrowEnd(lat, lon, direction, distanceMeters = 75) {
+  // Конечная точка стрелки направления (~75 метров от маркера), точный угол в градусах
+  // (0 = север, 90 = восток, по часовой стрелке — компас, не 4 стороны света).
+  function getArrowEnd(lat, lon, degrees, distanceMeters = 75) {
     const R = 6371000;
-    const meta = directionMeta(direction);
+    const rad = degrees * Math.PI / 180;
 
-    const endLat = lat + (meta.dLat * distanceMeters / R) * (180 / Math.PI);
-    const endLon = lon + (meta.dLon * distanceMeters / R) *
+    const endLat = lat + (Math.cos(rad) * distanceMeters / R) * (180 / Math.PI);
+    const endLon = lon + (Math.sin(rad) * distanceMeters / R) *
                    (180 / Math.PI) / Math.cos(lat * Math.PI / 180);
 
     return [endLat, endLon];
@@ -264,13 +254,12 @@
     });
   }
 
-  function drawDirectionArrow(lat, lon, direction, color) {
-    const meta = directionMeta(direction);
-    const end = getArrowEnd(lat, lon, direction);
+  function drawDirectionArrow(lat, lon, degrees, color) {
+    const end = getArrowEnd(lat, lon, degrees);
 
     const line = L.polyline([[lat, lon], end], { color, weight: 3 }).addTo(map);
     const arrowHead = L.marker(end, {
-      icon: createArrowHeadIcon(color, meta.rotation),
+      icon: createArrowHeadIcon(color, degrees),
       interactive: false
     }).addTo(map);
 
@@ -332,14 +321,13 @@
     if (emptyItem) emptyItem.remove();
 
     const meta = objectMeta(data.object_type);
-    const dirMeta = directionMeta(data.direction);
     const tMeta = threatMeta(data.threat_level);
 
     const li = document.createElement('li');
     li.classList.add(`level-${(data.threat_level || 'OBSERVATION').toLowerCase()}`);
     li.innerHTML = `
       <span class="entry-icon">${tMeta.icon}</span>
-      <span>${formatClock(data.timestamp)} | ${meta.icon} ${data.object_type} | ${dirMeta.arrow} ${dirMeta.label} | ${data.user}</span>
+      <span>${formatClock(data.timestamp)} | ${meta.icon} ${data.object_type} | ${data.direction_label} | ${data.user}</span>
     `;
     li.addEventListener('click', () => {
       map.setView([data.lat, data.lon], 16);
@@ -351,7 +339,6 @@
 
   function handleNewPoint(data) {
     const meta = objectMeta(data.object_type);
-    const dirMeta = directionMeta(data.direction);
     const tMeta = threatMeta(data.threat_level);
 
     const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type, data.threat_level) }).addTo(map);
@@ -359,14 +346,14 @@
       <div class="popup-card">
         <div class="popup-title">${meta.icon} ${meta.label}</div>
         Угроза: ${tMeta.icon} ${tMeta.label}<br>
-        Направление: ${dirMeta.arrow} ${dirMeta.label}<br>
+        Направление: ${data.direction_label}<br>
         Координаты: ${data.lat.toFixed(5)}, ${data.lon.toFixed(5)}<br>
         Время: ${formatClock(data.timestamp, true)}<br>
         Пользователь: ${data.user}
       </div>
     `);
 
-    const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction, tMeta.color);
+    const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction_degrees, tMeta.color);
     const pulseCircle = data.threat_level === 'THREAT' ? addPulsingMarker(data.lat, data.lon) : null;
     points.push({ marker, line, arrowHead, pulseCircle });
 
@@ -438,7 +425,8 @@
   async function testAlerts() {
     const testData = {
       object_type: 'UAV',
-      direction: 'NORTH',
+      direction_degrees: 47,
+      direction_label: 'СЕВЕРО-ВОСТОК (47°)',
       user: 'TEST',
       lat: 55.7558,
       lon: 37.6173,

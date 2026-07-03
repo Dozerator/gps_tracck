@@ -19,7 +19,8 @@ data class LocationPointRequest(
     val accuracy: Float?,
     val timestamp: String,
     @SerializedName("object_type") val objectType: String,
-    val direction: String,
+    @SerializedName("direction_degrees") val directionDegrees: Int,
+    @SerializedName("direction_label") val directionLabel: String,
     @SerializedName("threat_level") val threatLevel: String
 )
 
@@ -32,6 +33,7 @@ data class LocationPointResponse(
     val timestamp: String,
     @SerializedName("sent_at") val sentAt: String,
     @SerializedName("object_type") val objectType: String,
-    val direction: String,
+    @SerializedName("direction_degrees") val directionDegrees: Int,
+    @SerializedName("direction_label") val directionLabel: String,
     @SerializedName("threat_level") val threatLevel: String
 )

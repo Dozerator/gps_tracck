@@ -6,14 +6,6 @@ enum class ObjectType(val apiValue: String, val label: String) {
     QUAD("QUAD", "КВАДРИК")
 }
 
-/** Направление движения объекта, значение apiValue уходит в JSON как "direction". */
-enum class Direction(val apiValue: String, val label: String, val arrow: String) {
-    NORTH("NORTH", "СЕВЕР", "↑"),
-    SOUTH("SOUTH", "ЮГ", "↓"),
-    EAST("EAST", "ВОСТОК", "→"),
-    WEST("WEST", "ЗАПАД", "←")
-}
-
 /** Уровень угрозы, значение apiValue уходит в JSON как "threat_level". Цвета — NATO threat color coding. */
 enum class ThreatLevel(
     val apiValue: String,

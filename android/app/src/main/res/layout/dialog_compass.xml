@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_card"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:paddingBottom="16dp"
+        android:text="@string/direction_dialog_title"
+        android:textColor="@color/accent_orange"
+        android:textSize="14sp" />
+
+    <!-- Быстрые кнопки сторон света — снэп с анимацией 300мс -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnN"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="56dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="N"
+            android:textColor="@color/dialog_text"
+            app:strokeColor="@color/accent_orange" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnE"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="56dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="E"
+            android:textColor="@color/dialog_text"
+            app:strokeColor="@color/accent_orange" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnS"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="56dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="S"
+            android:textColor="@color/dialog_text"
+            app:strokeColor="@color/accent_orange" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnW"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="56dp"
+            android:layout_height="44dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="W"
+            android:textColor="@color/dialog_text"
+            app:strokeColor="@color/accent_orange" />
+
+    </LinearLayout>
+
+    <!-- Компас: направление задаётся только вращением пальцем -->
+    <com.example.operator.ui.CompassView
+        android:id="@+id/compassView"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tvAngle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:text="0°"
+        android:textColor="@color/accent_orange"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvDirectionLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="СЕВЕР"
+        android:textColor="@color/dialog_text_secondary"
+        android:textSize="14sp" />
+
+    <!-- Точная настройка: тап ±1°, долгое нажатие ±5° -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="20dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMinus"
+            android:layout_width="120dp"
+            android:layout_height="44dp"
+            android:text="◀  -1°"
+            android:textColor="@color/dialog_text"
+            app:backgroundTint="@color/direction_button_bg"
+            app:cornerRadius="10dp" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlus"
+            android:layout_width="120dp"
+            android:layout_height="44dp"
+            android:text="+1°  ▶"
+            android:textColor="@color/dialog_text"
+            app:backgroundTint="@color/direction_button_bg"
+            app:cornerRadius="10dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compassBackButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="@string/back_button"
+            android:textColor="@color/dialog_text_secondary" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compassCancelButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="@string/cancel_button"
+            android:textColor="@color/dialog_text_secondary" />
+
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/compassConfirmButton"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="@string/compass_confirm_button"
+            android:textColor="@color/dialog_text"
+            android:textStyle="bold"
+            app:backgroundTint="@color/accent_orange"
+            app:cornerRadius="12dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -21,6 +21,8 @@
     <string name="back_button">Назад</string>
     <string name="background_location_rationale">Для отслеживания местоположения в фоне разрешите доступ к геолокации всегда ("Разрешать всегда") в настройках приложения.</string>
     <string name="cancel_button">Отмена</string>
+    <string name="compass_confirm_button">✓ ВЫБРАТЬ</string>
+    <string name="compass_degrees_format">%1$d°</string>
     <string name="confirm_button">Подтвердить</string>
     <string name="confirm_point_coordinates">Координаты: %1$.5f, %2$.5f</string>
     <string name="confirm_point_direction">Направление: %1$s</string>
@@ -46,7 +48,7 @@
     <string name="point_send_error">Не удалось отправить точку</string>
     <string name="point_sent_toast">Точка отправлена оператору</string>
     <string name="queue_empty">Очередь пуста</string>
-    <string name="queue_item_format">%1$s%2$s | %3$s | %4$s</string>
+    <string name="queue_item_format">%1$s | %2$s | %3$s</string>
     <string name="queue_screen_title">Очередь точек (%1$d)</string>
     <string name="queue_sync_now_button">Синхронизировать сейчас</string>
     <string name="send_button">✓ ОТПРАВИТЬ</string>

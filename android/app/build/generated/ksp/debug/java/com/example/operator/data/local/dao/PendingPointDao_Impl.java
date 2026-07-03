@@ -50,7 +50,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR ABORT INTO `pending_points` (`id`,`lat`,`lon`,`accuracy`,`userId`,`timestamp`,`objectType`,`direction`,`threatLevel`,`status`,`createdAt`,`syncAttempts`,`lastSyncAttempt`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR ABORT INTO `pending_points` (`id`,`lat`,`lon`,`accuracy`,`userId`,`timestamp`,`objectType`,`directionDegrees`,`directionLabel`,`threatLevel`,`status`,`createdAt`,`syncAttempts`,`lastSyncAttempt`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -63,15 +63,16 @@ public final class PendingPointDao_Impl implements PendingPointDao {
         statement.bindString(5, entity.getUserId());
         statement.bindLong(6, entity.getTimestamp());
         statement.bindString(7, entity.getObjectType());
-        statement.bindString(8, entity.getDirection());
-        statement.bindString(9, entity.getThreatLevel());
-        statement.bindString(10, entity.getStatus());
-        statement.bindLong(11, entity.getCreatedAt());
-        statement.bindLong(12, entity.getSyncAttempts());
+        statement.bindLong(8, entity.getDirectionDegrees());
+        statement.bindString(9, entity.getDirectionLabel());
+        statement.bindString(10, entity.getThreatLevel());
+        statement.bindString(11, entity.getStatus());
+        statement.bindLong(12, entity.getCreatedAt());
+        statement.bindLong(13, entity.getSyncAttempts());
         if (entity.getLastSyncAttempt() == null) {
-          statement.bindNull(13);
+          statement.bindNull(14);
         } else {
-          statement.bindLong(13, entity.getLastSyncAttempt());
+          statement.bindLong(14, entity.getLastSyncAttempt());
         }
       }
     };
@@ -256,7 +257,8 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
           final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
           final int _cursorIndexOfObjectType = CursorUtil.getColumnIndexOrThrow(_cursor, "objectType");
-          final int _cursorIndexOfDirection = CursorUtil.getColumnIndexOrThrow(_cursor, "direction");
+          final int _cursorIndexOfDirectionDegrees = CursorUtil.getColumnIndexOrThrow(_cursor, "directionDegrees");
+          final int _cursorIndexOfDirectionLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "directionLabel");
           final int _cursorIndexOfThreatLevel = CursorUtil.getColumnIndexOrThrow(_cursor, "threatLevel");
           final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
@@ -279,8 +281,10 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
             final String _tmpObjectType;
             _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
-            final String _tmpDirection;
-            _tmpDirection = _cursor.getString(_cursorIndexOfDirection);
+            final int _tmpDirectionDegrees;
+            _tmpDirectionDegrees = _cursor.getInt(_cursorIndexOfDirectionDegrees);
+            final String _tmpDirectionLabel;
+            _tmpDirectionLabel = _cursor.getString(_cursorIndexOfDirectionLabel);
             final String _tmpThreatLevel;
             _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
             final String _tmpStatus;
@@ -295,7 +299,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             } else {
               _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
             }
-            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirection,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
             _result.add(_item);
           }
           return _result;
@@ -355,7 +359,8 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
           final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
           final int _cursorIndexOfObjectType = CursorUtil.getColumnIndexOrThrow(_cursor, "objectType");
-          final int _cursorIndexOfDirection = CursorUtil.getColumnIndexOrThrow(_cursor, "direction");
+          final int _cursorIndexOfDirectionDegrees = CursorUtil.getColumnIndexOrThrow(_cursor, "directionDegrees");
+          final int _cursorIndexOfDirectionLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "directionLabel");
           final int _cursorIndexOfThreatLevel = CursorUtil.getColumnIndexOrThrow(_cursor, "threatLevel");
           final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
@@ -378,8 +383,10 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
             final String _tmpObjectType;
             _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
-            final String _tmpDirection;
-            _tmpDirection = _cursor.getString(_cursorIndexOfDirection);
+            final int _tmpDirectionDegrees;
+            _tmpDirectionDegrees = _cursor.getInt(_cursorIndexOfDirectionDegrees);
+            final String _tmpDirectionLabel;
+            _tmpDirectionLabel = _cursor.getString(_cursorIndexOfDirectionLabel);
             final String _tmpThreatLevel;
             _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
             final String _tmpStatus;
@@ -394,7 +401,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             } else {
               _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
             }
-            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirection,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
             _result.add(_item);
           }
           return _result;

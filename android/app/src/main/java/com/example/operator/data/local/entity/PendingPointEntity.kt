@@ -20,7 +20,8 @@ data class PendingPointEntity(
     val userId: String,
     val timestamp: Long,
     val objectType: String,      // "UAV" или "QUAD"
-    val direction: String,       // "NORTH","SOUTH","WEST","EAST"
+    val directionDegrees: Int,   // 0..359, 0 = север, по часовой стрелке
+    val directionLabel: String,  // "СЕВЕРО-ВОСТОК (47°)"
     val threatLevel: String,     // "OBSERVATION","ATTENTION","THREAT"
     val status: String = PointStatus.PENDING,
     val createdAt: Long = System.currentTimeMillis(),

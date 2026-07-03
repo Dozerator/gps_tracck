@@ -20,8 +20,9 @@ CREATE TABLE IF NOT EXISTS location_points (
     accuracy DOUBLE PRECISION,
     timestamp TIMESTAMPTZ NOT NULL,
     sent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    object_type VARCHAR(10) NOT NULL,     -- 'UAV' или 'QUAD'
-    direction VARCHAR(10) NOT NULL,       -- 'NORTH', 'SOUTH', 'EAST' или 'WEST'
+    object_type VARCHAR(10) NOT NULL,             -- 'UAV' или 'QUAD'
+    direction_degrees INTEGER NOT NULL DEFAULT 0, -- 0..359, 0 = север, по часовой стрелке
+    direction_label VARCHAR(50) NOT NULL DEFAULT 'СЕВЕР (0°)',
     threat_level VARCHAR(15) NOT NULL DEFAULT 'OBSERVATION'  -- 'OBSERVATION', 'ATTENTION' или 'THREAT'
 );
 

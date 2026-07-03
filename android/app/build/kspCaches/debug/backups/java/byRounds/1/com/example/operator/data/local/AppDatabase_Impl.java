@@ -33,12 +33,12 @@ public final class AppDatabase_Impl extends AppDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `pending_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL, `accuracy` REAL NOT NULL, `userId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `objectType` TEXT NOT NULL, `direction` TEXT NOT NULL, `threatLevel` TEXT NOT NULL, `status` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `syncAttempts` INTEGER NOT NULL, `lastSyncAttempt` INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `pending_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `lat` REAL NOT NULL, `lon` REAL NOT NULL, `accuracy` REAL NOT NULL, `userId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `objectType` TEXT NOT NULL, `directionDegrees` INTEGER NOT NULL, `directionLabel` TEXT NOT NULL, `threatLevel` TEXT NOT NULL, `status` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `syncAttempts` INTEGER NOT NULL, `lastSyncAttempt` INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e35b9d43ec7a9796de2b482e0f39a913')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '777c58821bae18edea5dfbadd57ec63f')");
       }
 
       @Override
@@ -87,7 +87,7 @@ public final class AppDatabase_Impl extends AppDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsPendingPoints = new HashMap<String, TableInfo.Column>(13);
+        final HashMap<String, TableInfo.Column> _columnsPendingPoints = new HashMap<String, TableInfo.Column>(14);
         _columnsPendingPoints.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("lat", new TableInfo.Column("lat", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("lon", new TableInfo.Column("lon", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -95,7 +95,8 @@ public final class AppDatabase_Impl extends AppDatabase {
         _columnsPendingPoints.put("userId", new TableInfo.Column("userId", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("timestamp", new TableInfo.Column("timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("objectType", new TableInfo.Column("objectType", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsPendingPoints.put("direction", new TableInfo.Column("direction", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingPoints.put("directionDegrees", new TableInfo.Column("directionDegrees", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingPoints.put("directionLabel", new TableInfo.Column("directionLabel", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("threatLevel", new TableInfo.Column("threatLevel", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("status", new TableInfo.Column("status", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsPendingPoints.put("createdAt", new TableInfo.Column("createdAt", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -112,7 +113,7 @@ public final class AppDatabase_Impl extends AppDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "e35b9d43ec7a9796de2b482e0f39a913", "16a068ea1a9ecc1935c83586f920dea9");
+    }, "777c58821bae18edea5dfbadd57ec63f", "a6b900a5264271b19804e092040332c9");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

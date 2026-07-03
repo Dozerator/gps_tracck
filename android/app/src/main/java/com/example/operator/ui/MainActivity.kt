@@ -24,15 +24,15 @@ import com.example.operator.OperatorApp
 import com.example.operator.R
 import com.example.operator.data.repository.SendResult
 import com.example.operator.databinding.ActivityMainBinding
+import com.example.operator.databinding.DialogCompassBinding
 import com.example.operator.databinding.DialogConfirmBinding
-import com.example.operator.databinding.DialogDirectionBinding
 import com.example.operator.databinding.DialogObjectTypeBinding
 import com.example.operator.databinding.DialogThreatBinding
-import com.example.operator.model.Direction
 import com.example.operator.model.ObjectType
 import com.example.operator.model.ThreatLevel
 import com.example.operator.service.LocationService
 import com.example.operator.utils.VibrationManager
+import com.example.operator.utils.directionLabel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -218,12 +218,12 @@ class MainActivity : AppCompatActivity() {
         dialogBinding.uavButton.setOnClickListener {
             markPointViewModel.objectType = ObjectType.UAV
             dialog.dismiss()
-            showDirectionDialog()
+            showCompassDialog()
         }
         dialogBinding.quadButton.setOnClickListener {
             markPointViewModel.objectType = ObjectType.QUAD
             dialog.dismiss()
-            showDirectionDialog()
+            showCompassDialog()
         }
         dialogBinding.objectTypeCancelButton.setOnClickListener {
             dialog.dismiss()
@@ -232,30 +232,48 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // Шаг 2: выбор направления движения (крестообразная сетка 3x3).
-    private fun showDirectionDialog() {
-        val dialogBinding = DialogDirectionBinding.inflate(LayoutInflater.from(this))
+    // Шаг 2: направление движения — компас с точностью до градуса (вращение пальцем).
+    private fun showCompassDialog() {
+        val dialogBinding = DialogCompassBinding.inflate(LayoutInflater.from(this))
         val dialog = AlertDialog.Builder(this)
             .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val chooseDirection: (Direction) -> Unit = { direction ->
-            markPointViewModel.direction = direction
+        // Если возвращаемся назад из последующих шагов — восстанавливаем ранее выбранный угол.
+        val initialDegrees = markPointViewModel.directionDegrees ?: 0
+        dialogBinding.compassView.angleDegrees = initialDegrees.toFloat()
+        dialogBinding.tvAngle.text = getString(R.string.compass_degrees_format, initialDegrees)
+        dialogBinding.tvDirectionLabel.text = directionLabel(initialDegrees)
+
+        dialogBinding.compassView.onAngleChanged = { angle ->
+            val degrees = angle.toInt()
+            dialogBinding.tvAngle.text = getString(R.string.compass_degrees_format, degrees)
+            dialogBinding.tvDirectionLabel.text = directionLabel(degrees)
+        }
+
+        dialogBinding.btnN.setOnClickListener { dialogBinding.compassView.setAngleAnimated(0f) }
+        dialogBinding.btnE.setOnClickListener { dialogBinding.compassView.setAngleAnimated(90f) }
+        dialogBinding.btnS.setOnClickListener { dialogBinding.compassView.setAngleAnimated(180f) }
+        dialogBinding.btnW.setOnClickListener { dialogBinding.compassView.setAngleAnimated(270f) }
+
+        // Точная настройка: тап ±1°, долгое нажатие ±5°.
+        dialogBinding.btnMinus.setOnClickListener { dialogBinding.compassView.angleDegrees -= 1f }
+        dialogBinding.btnPlus.setOnClickListener { dialogBinding.compassView.angleDegrees += 1f }
+        dialogBinding.btnMinus.setOnLongClickListener { dialogBinding.compassView.angleDegrees -= 5f; true }
+        dialogBinding.btnPlus.setOnLongClickListener { dialogBinding.compassView.angleDegrees += 5f; true }
+
+        dialogBinding.compassConfirmButton.setOnClickListener {
+            markPointViewModel.directionDegrees = dialogBinding.compassView.angleDegrees.toInt()
             dialog.dismiss()
             showThreatDialog()
         }
-        dialogBinding.northButton.setOnClickListener { chooseDirection(Direction.NORTH) }
-        dialogBinding.southButton.setOnClickListener { chooseDirection(Direction.SOUTH) }
-        dialogBinding.eastButton.setOnClickListener { chooseDirection(Direction.EAST) }
-        dialogBinding.westButton.setOnClickListener { chooseDirection(Direction.WEST) }
-
-        dialogBinding.directionBackButton.setOnClickListener {
+        dialogBinding.compassBackButton.setOnClickListener {
             dialog.dismiss()
             showObjectTypeDialog()
         }
-        dialogBinding.directionCancelButton.setOnClickListener {
+        dialogBinding.compassCancelButton.setOnClickListener {
             dialog.dismiss()
             cancelMarking()
         }
@@ -298,7 +316,7 @@ class MainActivity : AppCompatActivity() {
 
         dialogBinding.threatBackButton.setOnClickListener {
             dialog.dismiss()
-            showDirectionDialog()
+            showCompassDialog()
         }
         dialogBinding.threatCancelButton.setOnClickListener {
             dialog.dismiss()
@@ -311,7 +329,7 @@ class MainActivity : AppCompatActivity() {
     private fun showFinalConfirmDialog() {
         val location = markPointViewModel.location ?: return
         val objectType = markPointViewModel.objectType ?: return
-        val direction = markPointViewModel.direction ?: return
+        val directionDegrees = markPointViewModel.directionDegrees ?: return
         val threatLevel = markPointViewModel.threatLevel ?: return
 
         val dialogBinding = DialogConfirmBinding.inflate(LayoutInflater.from(this))
@@ -322,7 +340,7 @@ class MainActivity : AppCompatActivity() {
         }
         dialogBinding.dialogTypeLine.text = getString(R.string.confirm_point_type, objectType.label)
         dialogBinding.dialogDirectionLine.text =
-            getString(R.string.confirm_point_direction, "${direction.arrow} ${direction.label}")
+            getString(R.string.confirm_point_direction, directionLabel(directionDegrees))
         dialogBinding.dialogThreatLine.text =
             getString(R.string.confirm_point_threat, threatLevel.icon, threatLevel.label)
         dialogBinding.dialogCoordinates.text =
@@ -350,7 +368,7 @@ class MainActivity : AppCompatActivity() {
         dialogBinding.confirmSendButton.setOnClickListener {
             dialog.dismiss()
             VibrationManager.vibrate(this, threatLevel.apiValue)
-            sendLocationPoint(location, objectType, direction, threatLevel)
+            sendLocationPoint(location, objectType, directionDegrees, directionLabel(directionDegrees), threatLevel)
         }
         dialogBinding.confirmCancelButton.setOnClickListener {
             dialog.dismiss()
@@ -368,7 +386,13 @@ class MainActivity : AppCompatActivity() {
 
     // Отправка идёт через MainViewModel/LocationRepository: онлайн — сразу на сервер,
     // офлайн (или ошибка сети) — в локальную очередь Room с последующей автосинхронизацией.
-    private fun sendLocationPoint(location: Location, objectType: ObjectType, direction: Direction, threatLevel: ThreatLevel) {
+    private fun sendLocationPoint(
+        location: Location,
+        objectType: ObjectType,
+        directionDegrees: Int,
+        directionLabelText: String,
+        threatLevel: ThreatLevel
+    ) {
         pendingSendObjectType = objectType
         mainViewModel.sendPoint(
             lat = location.latitude,
@@ -376,7 +400,8 @@ class MainActivity : AppCompatActivity() {
             accuracy = location.accuracy,
             timestampMillis = location.time,
             objectType = objectType,
-            direction = direction,
+            directionDegrees = directionDegrees,
+            directionLabel = directionLabelText,
             threatLevel = threatLevel
         )
         markPointViewModel.reset()

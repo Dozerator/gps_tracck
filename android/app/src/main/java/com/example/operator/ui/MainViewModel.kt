@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.operator.data.repository.LocationRepository
 import com.example.operator.data.repository.SendResult
-import com.example.operator.model.Direction
 import com.example.operator.model.ObjectType
 import com.example.operator.model.ThreatLevel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,11 +41,14 @@ class MainViewModel(private val repository: LocationRepository) : ViewModel() {
         accuracy: Float,
         timestampMillis: Long,
         objectType: ObjectType,
-        direction: Direction,
+        directionDegrees: Int,
+        directionLabel: String,
         threatLevel: ThreatLevel
     ) {
         viewModelScope.launch {
-            val result = repository.sendPoint(lat, lon, accuracy, timestampMillis, objectType, direction, threatLevel)
+            val result = repository.sendPoint(
+                lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel
+            )
             _sendResult.emit(result)
         }
     }

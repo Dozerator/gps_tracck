@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.operator.R
 import com.example.operator.data.local.entity.PendingPointEntity
 import com.example.operator.databinding.ItemQueuePointBinding
-import com.example.operator.model.Direction
 import com.example.operator.model.ObjectType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -30,13 +29,11 @@ class QueuePointAdapter : ListAdapter<PendingPointEntity, QueuePointAdapter.View
     class ViewHolder(private val binding: ItemQueuePointBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(point: PendingPointEntity, timeFormat: SimpleDateFormat) {
             val objectType = ObjectType.entries.find { it.apiValue == point.objectType }
-            val direction = Direction.entries.find { it.apiValue == point.direction }
 
             binding.itemIcon.text = if (objectType == ObjectType.QUAD) "⬡" else "✈"
             binding.itemText.text = binding.root.context.getString(
                 R.string.queue_item_format,
-                direction?.label.orEmpty(),
-                direction?.arrow.orEmpty(),
+                point.directionLabel,
                 timeFormat.format(Date(point.createdAt)),
                 point.status
             )
