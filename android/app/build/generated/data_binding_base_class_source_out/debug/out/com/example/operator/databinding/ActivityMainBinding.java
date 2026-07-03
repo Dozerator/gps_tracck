@@ -4,6 +4,7 @@ package com.example.operator.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,6 +34,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton markPointButton;
 
   @NonNull
+  public final ImageButton overflowMenuButton;
+
+  @NonNull
   public final TextView queueCount;
 
   @NonNull
@@ -43,12 +47,13 @@ public final class ActivityMainBinding implements ViewBinding {
 
   private ActivityMainBinding(@NonNull ConstraintLayout rootView,
       @NonNull ProgressBar locationProgress, @NonNull MapView mapView,
-      @NonNull MaterialButton markPointButton, @NonNull TextView queueCount,
-      @NonNull LinearLayout statusBar, @NonNull TextView statusText) {
+      @NonNull MaterialButton markPointButton, @NonNull ImageButton overflowMenuButton,
+      @NonNull TextView queueCount, @NonNull LinearLayout statusBar, @NonNull TextView statusText) {
     this.rootView = rootView;
     this.locationProgress = locationProgress;
     this.mapView = mapView;
     this.markPointButton = markPointButton;
+    this.overflowMenuButton = overflowMenuButton;
     this.queueCount = queueCount;
     this.statusBar = statusBar;
     this.statusText = statusText;
@@ -99,6 +104,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.overflowMenuButton;
+      ImageButton overflowMenuButton = ViewBindings.findChildViewById(rootView, id);
+      if (overflowMenuButton == null) {
+        break missingId;
+      }
+
       id = R.id.queueCount;
       TextView queueCount = ViewBindings.findChildViewById(rootView, id);
       if (queueCount == null) {
@@ -118,7 +129,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((ConstraintLayout) rootView, locationProgress, mapView,
-          markPointButton, queueCount, statusBar, statusText);
+          markPointButton, overflowMenuButton, queueCount, statusBar, statusText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

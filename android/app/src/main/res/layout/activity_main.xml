@@ -78,4 +78,18 @@
 
     </LinearLayout>
 
+    <!-- Меню (три точки): переход на экран истории смены. Объявлена после statusBar,
+         чтобы оставаться поверх и кликабельной, даже когда полоска статуса видна. -->
+    <ImageButton
+        android:id="@+id/overflowMenuButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/menu_button_description"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

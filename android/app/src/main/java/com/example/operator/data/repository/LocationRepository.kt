@@ -4,11 +4,14 @@ import android.content.Context
 import com.example.operator.auth.AuthManager
 import com.example.operator.data.local.dao.PendingPointDao
 import com.example.operator.data.local.entity.PendingPointEntity
+import com.example.operator.data.local.entity.PointStatus
+import com.example.operator.data.local.entity.TrackSummary
 import com.example.operator.model.LocationPointRequest
 import com.example.operator.model.ObjectType
 import com.example.operator.model.ThreatLevel
 import com.example.operator.network.ApiService
 import com.example.operator.utils.NetworkMonitor
+import com.example.operator.utils.TrackManager
 import com.example.operator.utils.isoUtc
 import com.example.operator.workers.SyncWorker
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +34,11 @@ class LocationRepository(
     val allPoints: Flow<List<PendingPointEntity>> = dao.getAllPoints()
     val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
 
+    /** История точек за смену (по умолчанию — последние 12 часов), для экрана истории. */
+    fun getShiftHistory(sinceMillis: Long): Flow<List<PendingPointEntity>> = dao.getShiftHistory(sinceMillis)
+
+    fun getAllTracks(): Flow<List<TrackSummary>> = dao.getAllTracks()
+
     suspend fun sendPoint(
         lat: Double,
         lon: Double,
@@ -41,6 +49,9 @@ class LocationRepository(
         directionLabel: String,
         threatLevel: ThreatLevel = ThreatLevel.OBSERVATION
     ): SendResult {
+        val userId = authManager.getUserLogin().orEmpty()
+        val lastPoint = dao.getLastPoint(userId, objectType.apiValue)
+        val trackId = TrackManager.generateTrackId(userId, objectType.apiValue, timestampMillis, lastPoint)
         val token = authManager.getToken()
 
         if (networkMonitor.isOnline.value && token != null) {
@@ -55,48 +66,69 @@ class LocationRepository(
                         objectType = objectType.apiValue,
                         directionDegrees = directionDegrees,
                         directionLabel = directionLabel,
-                        threatLevel = threatLevel.apiValue
+                        threatLevel = threatLevel.apiValue,
+                        trackId = trackId
                     )
                 )
                 if (response.isSuccessful) {
+                    // Точка ушла на сервер, но всё равно сохраняем её локально (сразу как
+                    // SYNCED) — иначе экран истории/треков на телефоне не видел бы половину
+                    // отправленных отметок, а следующий вызов getLastPoint() не нашёл бы её
+                    // для продолжения трека.
+                    saveLocally(
+                        lat, lon, accuracy, userId, timestampMillis, objectType,
+                        directionDegrees, directionLabel, threatLevel, trackId, PointStatus.SYNCED
+                    )
                     SendResult.SentOnline
                 } else {
-                    // Сервер ответил ошибкой — не теряем точку, кладём в очередь.
-                    saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
+                    saveLocally(
+                        lat, lon, accuracy, userId, timestampMillis, objectType,
+                        directionDegrees, directionLabel, threatLevel, trackId, PointStatus.PENDING
+                    )
                     SendResult.SavedOffline
                 }
             } catch (e: Exception) {
-                // Сеть считалась доступной, но запрос не прошёл — тоже в очередь.
-                saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
+                saveLocally(
+                    lat, lon, accuracy, userId, timestampMillis, objectType,
+                    directionDegrees, directionLabel, threatLevel, trackId, PointStatus.PENDING
+                )
                 SendResult.SavedOffline
             }
         }
 
-        saveToQueue(lat, lon, accuracy, timestampMillis, objectType, directionDegrees, directionLabel, threatLevel)
+        saveLocally(
+            lat, lon, accuracy, userId, timestampMillis, objectType,
+            directionDegrees, directionLabel, threatLevel, trackId, PointStatus.PENDING
+        )
         return SendResult.SavedOffline
     }
 
-    private suspend fun saveToQueue(
+    private suspend fun saveLocally(
         lat: Double,
         lon: Double,
         accuracy: Float,
+        userId: String,
         timestampMillis: Long,
         objectType: ObjectType,
         directionDegrees: Int,
         directionLabel: String,
-        threatLevel: ThreatLevel
+        threatLevel: ThreatLevel,
+        trackId: String,
+        status: String
     ): Long {
         return dao.insert(
             PendingPointEntity(
                 lat = lat,
                 lon = lon,
                 accuracy = accuracy,
-                userId = authManager.getUserLogin() ?: "",
+                userId = userId,
                 timestamp = timestampMillis,
                 objectType = objectType.apiValue,
                 directionDegrees = directionDegrees,
                 directionLabel = directionLabel,
-                threatLevel = threatLevel.apiValue
+                threatLevel = threatLevel.apiValue,
+                status = status,
+                trackId = trackId
             )
         )
     }

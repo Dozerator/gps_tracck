@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/direction_button_bg"
+    android:layout_marginBottom="6dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/trackObjectLine"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/dialog_text"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="✈ UAV — 3 точки" />
+
+        <TextView
+            android:id="@+id/trackThreatBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="● УГРОЗА" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/trackTimeRangeLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/dialog_text_secondary"
+        android:textSize="12sp"
+        tools:text="14:30 → 14:40" />
+
+</LinearLayout>

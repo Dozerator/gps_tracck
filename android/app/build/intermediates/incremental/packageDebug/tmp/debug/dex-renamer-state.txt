@@ -1,4 +1,4 @@
-#Fri Jul 03 18:51:46 MSK 2026
+#Fri Jul 03 22:05:48 MSK 2026
 base.0=D\:\\Work\\Cowork\\Develop\\Operator\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=D\:\\Work\\Cowork\\Develop\\Operator\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.10=D\:\\Work\\Cowork\\Develop\\Operator\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\8\\classes.dex

@@ -21,7 +21,8 @@ data class LocationPointRequest(
     @SerializedName("object_type") val objectType: String,
     @SerializedName("direction_degrees") val directionDegrees: Int,
     @SerializedName("direction_label") val directionLabel: String,
-    @SerializedName("threat_level") val threatLevel: String
+    @SerializedName("threat_level") val threatLevel: String,
+    @SerializedName("track_id") val trackId: String
 )
 
 data class LocationPointResponse(
@@ -35,5 +36,6 @@ data class LocationPointResponse(
     @SerializedName("object_type") val objectType: String,
     @SerializedName("direction_degrees") val directionDegrees: Int,
     @SerializedName("direction_label") val directionLabel: String,
-    @SerializedName("threat_level") val threatLevel: String
+    @SerializedName("threat_level") val threatLevel: String,
+    @SerializedName("track_id") val trackId: String?
 )

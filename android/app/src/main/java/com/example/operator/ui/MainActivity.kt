@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -91,11 +92,22 @@ class MainActivity : AppCompatActivity() {
         binding.statusBar.setOnClickListener {
             startActivity(Intent(this, QueueActivity::class.java))
         }
+        binding.overflowMenuButton.setOnClickListener { showOverflowMenu(it) }
 
         requestNotificationPermissionIfNeeded()
         requestForegroundPermissionsIfNeeded()
         observeLocationUpdates()
         observeSyncStatus()
+    }
+
+    private fun showOverflowMenu(anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        popup.menu.add(getString(R.string.menu_history_item))
+        popup.setOnMenuItemClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+            true
+        }
+        popup.show()
     }
 
     private fun setupMap() {

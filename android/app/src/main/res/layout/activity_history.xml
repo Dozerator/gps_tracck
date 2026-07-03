@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dialog_background"
+    android:orientation="vertical">
+
+    <!-- Заголовок -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/direction_button_bg"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_button"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/dialog_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:letterSpacing="0.1"
+            android:text="@string/history_title"
+            android:textColor="@color/accent_orange"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExport"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="@string/history_export_button"
+            android:textColor="@color/accent_orange"
+            android:textSize="11sp"
+            app:backgroundTint="@color/direction_button_bg" />
+
+    </LinearLayout>
+
+    <!-- Табы: Точки / Треки -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/direction_button_bg"
+        app:tabIndicatorColor="@color/accent_orange"
+        app:tabSelectedTextColor="@color/accent_orange"
+        app:tabTextColor="@color/dialog_text_secondary">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history_tab_points" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history_tab_tracks" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- Статистика смены -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/direction_button_bg"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvStatTotal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/dialog_text"
+            android:textSize="12sp"
+            tools:text="Всего: 0" />
+
+        <TextView
+            android:id="@+id/tvStatThreat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/status_offline"
+            android:textSize="12sp"
+            tools:text="🔴 Угроз: 0" />
+
+        <TextView
+            android:id="@+id/tvStatAttention"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/status_queued"
+            android:textSize="12sp"
+            tools:text="🟡 Внимание: 0" />
+
+    </LinearLayout>
+
+    <!-- Список: точки или треки, в зависимости от выбранного таба -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/history_empty"
+            android:textColor="@color/dialog_text_secondary"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

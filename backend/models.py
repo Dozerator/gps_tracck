@@ -31,5 +31,6 @@ class LocationPoint(Base):
     direction_degrees = Column(Integer, nullable=False, default=0)
     direction_label = Column(String(50), nullable=False, default="СЕВЕР (0°)")
     threat_level = Column(String(15), nullable=False, default="OBSERVATION")
+    track_id = Column(String(100), nullable=True, index=True)
 
     user = relationship("User", back_populates="points")

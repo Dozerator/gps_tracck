@@ -3091,6 +3091,7 @@ drawable ic_menu_compass
 drawable ic_menu_mapmode
 drawable ic_menu_mylocation
 drawable ic_menu_offline
+drawable ic_more_vert
 drawable ic_mtrl_checked_circle
 drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
@@ -3292,7 +3293,9 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnBack
 id btnE
+id btnExport
 id btnMinus
 id btnN
 id btnPlus
@@ -3447,8 +3450,12 @@ id invisible
 id inward
 id is_pooling_container_tag
 id italic
+id itemDirectionLine
 id itemIcon
+id itemObjectLine
 id itemText
+id itemThreatBadge
+id itemUserLine
 id item_touch_helper_previous_elevation
 id jumpToEnd
 id jumpToStart
@@ -3569,6 +3576,7 @@ id open_search_view_toolbar
 id open_search_view_toolbar_container
 id outline
 id outward
+id overflowMenuButton
 id overshoot
 id packed
 id parallax
@@ -3606,6 +3614,7 @@ id right_icon
 id right_side
 id rounded
 id row_index_key
+id rvHistory
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3670,6 +3679,7 @@ id submenuarrow
 id submit_area
 id supportScrollUp
 id syncNowButton
+id tabLayout
 id tabMode
 id tag_accessibility_actions
 id tag_accessibility_clickable_spans
@@ -3724,6 +3734,9 @@ id toggle
 id top
 id topPanel
 id touch_outside
+id trackObjectLine
+id trackThreatBadge
+id trackTimeRangeLine
 id transitionToEnd
 id transitionToStart
 id transition_clip
@@ -3737,6 +3750,10 @@ id transition_transform
 id triangle
 id tvAngle
 id tvDirectionLabel
+id tvEmpty
+id tvStatAttention
+id tvStatThreat
+id tvStatTotal
 id uavButton
 id unchecked
 id uniform
@@ -3877,6 +3894,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_history
 layout activity_login
 layout activity_main
 layout activity_queue
@@ -3903,7 +3921,9 @@ layout dialog_object_type
 layout dialog_threat
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout item_history_point
 layout item_queue_point
+layout item_track_summary
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
@@ -4084,6 +4104,16 @@ string format_distance_only_nautical_mile
 string format_distance_value_unit
 string hide_bottom_view_on_scroll_behavior
 string hills
+string history_direction_time_format
+string history_empty
+string history_export_button
+string history_stat_attention
+string history_stat_threat
+string history_stat_total
+string history_tab_points
+string history_tab_tracks
+string history_title
+string history_user_format
 string icon_content_description
 string item_view_role_description
 string location_permission_rationale
@@ -4136,6 +4166,8 @@ string material_timepicker_minute
 string material_timepicker_pm
 string material_timepicker_select_time
 string material_timepicker_text_input_mode_description
+string menu_button_description
+string menu_history_item
 string mtrl_badge_numberless_content_description
 string mtrl_checkbox_button_icon_path_checked
 string mtrl_checkbox_button_icon_path_group_name
@@ -4243,6 +4275,8 @@ string status_online
 string status_queue_count
 string threat_dialog_title
 string topo
+string track_object_format
+string track_time_range_format
 string unknown
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
@@ -5526,4 +5560,5 @@ styleable ViewPager2 android_orientation
 styleable ViewStubCompat android_id android_layout android_inflatedId
 styleable ViewTransition android_id SharedValue SharedValueId clearsTag duration ifTagNotSet ifTagSet motionInterpolator motionTarget onStateTransition pathMotionArc setsTag transitionDisable upDuration viewTransitionMode
 styleable include constraintSet
+xml file_paths
 xml network_security_config

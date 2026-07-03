@@ -26,5 +26,6 @@ data class PendingPointEntity(
     val status: String = PointStatus.PENDING,
     val createdAt: Long = System.currentTimeMillis(),
     val syncAttempts: Int = 0,
-    val lastSyncAttempt: Long? = null
+    val lastSyncAttempt: Long? = null,
+    val trackId: String? = null  // группировка в трек — см. utils/TrackManager.kt
 )

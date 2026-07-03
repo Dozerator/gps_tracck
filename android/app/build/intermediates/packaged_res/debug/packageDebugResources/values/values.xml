@@ -31,6 +31,16 @@
     <string name="confirm_point_title_threat">⚠ ВНИМАНИЕ — УГРОЗА</string>
     <string name="confirm_point_type">Тип: %1$s</string>
     <string name="direction_dialog_title">Направление движения</string>
+    <string name="history_direction_time_format">%1$s | %2$s</string>
+    <string name="history_empty">Пока нет точек за эту смену</string>
+    <string name="history_export_button">ЭКСПОРТ</string>
+    <string name="history_stat_attention">🟡 Внимание: %1$d</string>
+    <string name="history_stat_threat">🔴 Угроз: %1$d</string>
+    <string name="history_stat_total">Всего: %1$d</string>
+    <string name="history_tab_points">ВСЕ ТОЧКИ</string>
+    <string name="history_tab_tracks">ТРЕКИ</string>
+    <string name="history_title">ИСТОРИЯ СМЕНЫ</string>
+    <string name="history_user_format">👤 %1$s</string>
     <string name="location_permission_rationale">Приложению требуется доступ к геолокации, чтобы отображать ваше местоположение на карте оператора и отправлять отмеченные точки.</string>
     <string name="login_button">Войти</string>
     <string name="login_error">Неверный логин или пароль</string>
@@ -38,6 +48,8 @@
     <string name="login_network_error">Ошибка сети. Проверьте подключение</string>
     <string name="login_title">Operator Tracker</string>
     <string name="mark_point_button">Отправить точку</string>
+    <string name="menu_button_description">Меню</string>
+    <string name="menu_history_item">История смены</string>
     <string name="notification_channel_name">Отслеживание местоположения</string>
     <string name="notification_text">Отслеживание местоположения выполняется в фоне</string>
     <string name="notification_title">Operator Tracker активен</string>
@@ -59,6 +71,8 @@
     <string name="status_online">● ОНЛАЙН</string>
     <string name="status_queue_count">| В очереди: %1$d</string>
     <string name="threat_dialog_title">ОЦЕНИТЕ УГРОЗУ</string>
+    <string name="track_object_format">%1$s %2$s — %3$d точки</string>
+    <string name="track_time_range_format">%1$s → %2$s</string>
     <style name="Theme.Operator" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

@@ -72,7 +72,11 @@ class SyncWorker(
     companion object {
         const val WORK_NAME = "sync_pending_points"
         const val MAX_SYNC_ATTEMPTS = 5
-        private const val SYNCED_RETENTION_MS = 60 * 60 * 1000L // 1 час
+
+        // Локальная таблица теперь служит и историей за смену (экран "История"), а не
+        // только очередью на отправку — поэтому окно хранения увеличено с 1 часа до 12,
+        // чтобы синхронизированные точки не исчезали раньше, чем закончится смена.
+        private const val SYNCED_RETENTION_MS = 12 * 60 * 60 * 1000L // 12 часов
 
         fun schedule(context: Context) {
             val constraints = Constraints.Builder()
@@ -104,5 +108,8 @@ fun PendingPointEntity.toRequest(): LocationPointRequest = LocationPointRequest(
     objectType = objectType,
     directionDegrees = directionDegrees,
     directionLabel = directionLabel,
-    threatLevel = threatLevel
+    threatLevel = threatLevel,
+    // Записи до этой фичи (миграция v2→v3) могли не иметь trackId — считаем каждую
+    // такую точку отдельным треком из одного отчёта, а не блокируем синхронизацию.
+    trackId = trackId ?: "${userId}_${objectType}_$timestamp"
 )

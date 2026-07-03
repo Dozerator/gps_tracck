@@ -56,6 +56,28 @@
   #points-list li.level-attention { background: rgba(255, 152, 0, 0.12); border-left-color: #FF9800; }
   #points-list li.level-threat { background: rgba(244, 67, 54, 0.14); border-left-color: #F44336; }
 
+  /* --- Треки и история: табы боковой панели --- */
+  #sidebar-tabs { display: flex; border-bottom: 1px solid #eee; }
+  #sidebar-tabs button {
+    flex: 1; background: none; border: none; padding: 10px 4px; cursor: pointer;
+    font-size: 11px; letter-spacing: 0.05em; color: #999; border-bottom: 2px solid transparent;
+  }
+  #sidebar-tabs button.active { color: #1565C0; border-bottom-color: #1565C0; font-weight: 600; }
+
+  #tracks-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; display: none; }
+  #tracks-list li {
+    padding: 10px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; font-size: 13px; color: #2c3e50;
+  }
+  #tracks-list li:hover { background: #f7f7f7; }
+  #tracks-list li .track-meta { color: #999; font-size: 11px; margin-top: 2px; }
+  #tracks-list .empty { color: #999; text-align: center; padding: 24px 16px; cursor: default; }
+
+  #stats-panel { flex: 1; overflow-y: auto; padding: 16px; display: none; }
+  #stats-panel .stat-row {
+    display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0; font-size: 13px;
+  }
+
   #toast-container {
     position: fixed; top: 20px; right: 20px; z-index: 10000;
     display: flex; flex-direction: column; gap: 10px;
@@ -153,9 +175,24 @@
     <h2>Полученные точки</h2>
     <button id="clear-btn">Очистить карту</button>
   </div>
+
+  <div id="sidebar-tabs">
+    <button id="tab-events" class="active">СОБЫТИЯ</button>
+    <button id="tab-tracks">ТРЕКИ</button>
+    <button id="tab-stats">СТАТ (12ч)</button>
+  </div>
+
   <ul id="points-list">
     <li class="empty">Пока нет точек</li>
   </ul>
+
+  <ul id="tracks-list">
+    <li class="empty">Пока нет треков</li>
+  </ul>
+
+  <div id="stats-panel">
+    <div id="stats-content">Загрузка…</div>
+  </div>
 </div>
 
 <div id="sound-controls">
@@ -168,6 +205,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/static/sounds/AudioManager.js"></script>
 <script src="/static/alerts/AlertManager.js"></script>
+<script src="/static/tracks/TrackManager.js"></script>
 <script>
   const map = L.map('map').setView([55.7558, 37.6173], 11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -287,6 +325,8 @@
   const statusEl = document.getElementById('status');
   const statusTextEl = document.getElementById('status-text');
 
+  const trackManager = new TrackManager(map);
+
   toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
 
   clearBtn.addEventListener('click', () => {
@@ -299,6 +339,7 @@
     points.length = 0;
     pointsListEl.innerHTML = '<li class="empty">Пока нет точек</li>';
     pointsCountEl.textContent = '0';
+    trackManager.clearAll(); // "Очистить карту" удаляет маркеры И треки
   });
 
   function formatClock(isoString, withSeconds = false) {
@@ -337,11 +378,13 @@
     pointsCountEl.textContent = points.length.toString();
   }
 
-  function handleNewPoint(data) {
+  // Маркер объекта + попап — общая точка входа для живых точек (handleNewPoint)
+  // и для исторических точек трека, подгруженных с сервера (TrackManager.loadFromServer).
+  function placeObjectMarker(data) {
     const meta = objectMeta(data.object_type);
     const tMeta = threatMeta(data.threat_level);
 
-    const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type, data.threat_level) }).addTo(map);
+    const marker = L.marker([data.lat, data.lon], { icon: createObjectIcon(data.object_type, data.threat_level) });
     marker.bindPopup(`
       <div class="popup-card">
         <div class="popup-title">${meta.icon} ${meta.label}</div>
@@ -352,12 +395,19 @@
         Пользователь: ${data.user}
       </div>
     `);
+    return marker;
+  }
 
+  function handleNewPoint(data) {
+    const tMeta = threatMeta(data.threat_level);
+
+    const marker = placeObjectMarker(data).addTo(map);
     const { line, arrowHead } = drawDirectionArrow(data.lat, data.lon, data.direction_degrees, tMeta.color);
     const pulseCircle = data.threat_level === 'THREAT' ? addPulsingMarker(data.lat, data.lon) : null;
     points.push({ marker, line, arrowHead, pulseCircle });
 
     addPointToSidebar(data, marker);
+    trackManager.addPoint(data); // линия трека, соединяющая точки одного объекта
 
     // Звук + вспышка + toast + уведомление браузера + фокус — всё по уровню угрозы.
     alertManager.handleNewPoint(data);
@@ -400,6 +450,97 @@
   }
 
   connectWebSocket();
+
+  // --- Табы боковой панели: СОБЫТИЯ / ТРЕКИ / СТАТ ---
+  const tracksListEl = document.getElementById('tracks-list');
+  const statsPanelEl = document.getElementById('stats-panel');
+  const statsContentEl = document.getElementById('stats-content');
+  const tabEventsBtn = document.getElementById('tab-events');
+  const tabTracksBtn = document.getElementById('tab-tracks');
+  const tabStatsBtn = document.getElementById('tab-stats');
+
+  function switchSidebarTab(tab) {
+    pointsListEl.style.display = tab === 'events' ? 'block' : 'none';
+    tracksListEl.style.display = tab === 'tracks' ? 'block' : 'none';
+    statsPanelEl.style.display = tab === 'stats' ? 'block' : 'none';
+
+    tabEventsBtn.classList.toggle('active', tab === 'events');
+    tabTracksBtn.classList.toggle('active', tab === 'tracks');
+    tabStatsBtn.classList.toggle('active', tab === 'stats');
+
+    if (tab === 'tracks') loadTracksList();
+    if (tab === 'stats') loadStats();
+  }
+
+  tabEventsBtn.addEventListener('click', () => switchSidebarTab('events'));
+  tabTracksBtn.addEventListener('click', () => switchSidebarTab('tracks'));
+  tabStatsBtn.addEventListener('click', () => switchSidebarTab('stats'));
+
+  async function loadTracksList() {
+    try {
+      const res = await fetch('/api/tracks/?hours=12');
+      if (!res.ok) return;
+      const tracks = await res.json();
+
+      if (tracks.length === 0) {
+        tracksListEl.innerHTML = '<li class="empty">Пока нет треков</li>';
+        return;
+      }
+
+      tracksListEl.innerHTML = '';
+      tracks.forEach((track) => {
+        const meta = objectMeta(track.object_type);
+        const tMeta = threatMeta(track.max_threat);
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div>${meta.icon} ${track.object_type} — ${track.point_count} ${pointsWord(track.point_count)}
+            <span style="color:${tMeta.color}">● ${tMeta.label}</span></div>
+          <div class="track-meta">${formatClock(track.start_time)} → ${formatClock(track.end_time)} | 👤 ${track.user_id}</div>
+        `;
+        li.addEventListener('click', () => {
+          map.fitBounds([[track.min_lat, track.min_lon], [track.max_lat, track.max_lon]], { padding: [40, 40] });
+        });
+        tracksListEl.appendChild(li);
+      });
+    } catch (e) {
+      console.error('Ошибка загрузки треков:', e);
+    }
+  }
+
+  function pointsWord(count) {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 === 1 && mod100 !== 11) return 'точка';
+    if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'точки';
+    return 'точек';
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch('/api/tracks/stats/shift?hours=12');
+      if (!res.ok) return;
+      const stats = await res.json();
+
+      statsContentEl.innerHTML = `
+        <div class="stat-row"><span>Всего точек</span><b>${stats.total}</b></div>
+        <div class="stat-row" style="color:#F44336"><span>🔴 Угрозы</span><b>${stats.threats}</b></div>
+        <div class="stat-row" style="color:#FF9800"><span>🟡 Внимание</span><b>${stats.attention}</b></div>
+        <div class="stat-row" style="color:#4CAF50"><span>🟢 Наблюдение</span><b>${stats.observation}</b></div>
+        <div class="stat-row"><span>Треков</span><b>${stats.total_tracks}</b></div>
+        <div class="stat-row"><span>Наблюдателей</span><b>${stats.active_users}</b></div>
+      `;
+    } catch (e) {
+      console.error('Ошибка загрузки статистики:', e);
+    }
+  }
+
+  // Статистика обновляется каждые 60 секунд, пока открыта соответствующая вкладка.
+  setInterval(() => {
+    if (statsPanelEl.style.display === 'block') loadStats();
+  }, 60000);
+
+  // История за смену подгружается один раз при открытии панели.
+  trackManager.loadFromServer(12);
 
   // --- Панель управления звуком ---
   const soundToggleBtn = document.getElementById('btn-sound-toggle');

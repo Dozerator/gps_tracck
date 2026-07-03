@@ -26,6 +26,7 @@ async def create_point(
         direction_degrees=payload.direction_degrees,
         direction_label=payload.direction_label,
         threat_level=payload.threat_level,
+        track_id=payload.track_id,
     )
     db.add(point)
     db.commit()
@@ -41,6 +42,7 @@ async def create_point(
         "direction_degrees": point.direction_degrees,
         "direction_label": point.direction_label,
         "threat_level": point.threat_level,
+        "track_id": point.track_id,
         "timestamp": point.timestamp.isoformat(),
     }
 

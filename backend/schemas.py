@@ -27,6 +27,9 @@ class LocationPointCreate(BaseModel):
     direction_degrees: int = Field(..., ge=0, le=359)
     direction_label: str = Field(..., max_length=50)
     threat_level: ThreatLevel = "OBSERVATION"
+    # Клиент сам решает, продолжается ли трек (тот же пользователь+тип объекта
+    # в пределах 10-минутного окна) — см. Android utils/TrackManager.kt.
+    track_id: str = Field(..., max_length=100)
 
 
 class LocationPointResponse(BaseModel):
@@ -41,6 +44,7 @@ class LocationPointResponse(BaseModel):
     direction_degrees: int
     direction_label: str
     threat_level: ThreatLevel
+    track_id: str | None
 
     class Config:
         from_attributes = True

@@ -3,6 +3,7 @@ package com.example.operator.data.local.dao;
 import android.database.Cursor;
 import android.os.CancellationSignal;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.CoroutinesRoom;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
@@ -12,6 +13,7 @@ import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
 import com.example.operator.data.local.entity.PendingPointEntity;
+import com.example.operator.data.local.entity.TrackSummary;
 import java.lang.Class;
 import java.lang.Exception;
 import java.lang.Integer;
@@ -50,7 +52,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR ABORT INTO `pending_points` (`id`,`lat`,`lon`,`accuracy`,`userId`,`timestamp`,`objectType`,`directionDegrees`,`directionLabel`,`threatLevel`,`status`,`createdAt`,`syncAttempts`,`lastSyncAttempt`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR ABORT INTO `pending_points` (`id`,`lat`,`lon`,`accuracy`,`userId`,`timestamp`,`objectType`,`directionDegrees`,`directionLabel`,`threatLevel`,`status`,`createdAt`,`syncAttempts`,`lastSyncAttempt`,`trackId`) VALUES (nullif(?, 0),?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -73,6 +75,11 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           statement.bindNull(14);
         } else {
           statement.bindLong(14, entity.getLastSyncAttempt());
+        }
+        if (entity.getTrackId() == null) {
+          statement.bindNull(15);
+        } else {
+          statement.bindString(15, entity.getTrackId());
         }
       }
     };
@@ -264,6 +271,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
           final int _cursorIndexOfSyncAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "syncAttempts");
           final int _cursorIndexOfLastSyncAttempt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastSyncAttempt");
+          final int _cursorIndexOfTrackId = CursorUtil.getColumnIndexOrThrow(_cursor, "trackId");
           final List<PendingPointEntity> _result = new ArrayList<PendingPointEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final PendingPointEntity _item;
@@ -299,7 +307,13 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             } else {
               _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
             }
-            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
+            final String _tmpTrackId;
+            if (_cursor.isNull(_cursorIndexOfTrackId)) {
+              _tmpTrackId = null;
+            } else {
+              _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            }
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt,_tmpTrackId);
             _result.add(_item);
           }
           return _result;
@@ -366,6 +380,7 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
           final int _cursorIndexOfSyncAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "syncAttempts");
           final int _cursorIndexOfLastSyncAttempt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastSyncAttempt");
+          final int _cursorIndexOfTrackId = CursorUtil.getColumnIndexOrThrow(_cursor, "trackId");
           final List<PendingPointEntity> _result = new ArrayList<PendingPointEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final PendingPointEntity _item;
@@ -401,7 +416,336 @@ public final class PendingPointDao_Impl implements PendingPointDao {
             } else {
               _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
             }
-            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt);
+            final String _tmpTrackId;
+            if (_cursor.isNull(_cursorIndexOfTrackId)) {
+              _tmpTrackId = null;
+            } else {
+              _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            }
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt,_tmpTrackId);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Object getLastPoint(final String userId, final String objectType,
+      final Continuation<? super PendingPointEntity> $completion) {
+    final String _sql = "\n"
+            + "        SELECT * FROM pending_points\n"
+            + "        WHERE userId = ? AND objectType = ?\n"
+            + "        ORDER BY timestamp DESC LIMIT 1\n"
+            + "        ";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 2);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, userId);
+    _argIndex = 2;
+    _statement.bindString(_argIndex, objectType);
+    final CancellationSignal _cancellationSignal = DBUtil.createCancellationSignal();
+    return CoroutinesRoom.execute(__db, false, _cancellationSignal, new Callable<PendingPointEntity>() {
+      @Override
+      @Nullable
+      public PendingPointEntity call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfLat = CursorUtil.getColumnIndexOrThrow(_cursor, "lat");
+          final int _cursorIndexOfLon = CursorUtil.getColumnIndexOrThrow(_cursor, "lon");
+          final int _cursorIndexOfAccuracy = CursorUtil.getColumnIndexOrThrow(_cursor, "accuracy");
+          final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
+          final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+          final int _cursorIndexOfObjectType = CursorUtil.getColumnIndexOrThrow(_cursor, "objectType");
+          final int _cursorIndexOfDirectionDegrees = CursorUtil.getColumnIndexOrThrow(_cursor, "directionDegrees");
+          final int _cursorIndexOfDirectionLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "directionLabel");
+          final int _cursorIndexOfThreatLevel = CursorUtil.getColumnIndexOrThrow(_cursor, "threatLevel");
+          final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfSyncAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "syncAttempts");
+          final int _cursorIndexOfLastSyncAttempt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastSyncAttempt");
+          final int _cursorIndexOfTrackId = CursorUtil.getColumnIndexOrThrow(_cursor, "trackId");
+          final PendingPointEntity _result;
+          if (_cursor.moveToFirst()) {
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final double _tmpLat;
+            _tmpLat = _cursor.getDouble(_cursorIndexOfLat);
+            final double _tmpLon;
+            _tmpLon = _cursor.getDouble(_cursorIndexOfLon);
+            final float _tmpAccuracy;
+            _tmpAccuracy = _cursor.getFloat(_cursorIndexOfAccuracy);
+            final String _tmpUserId;
+            _tmpUserId = _cursor.getString(_cursorIndexOfUserId);
+            final long _tmpTimestamp;
+            _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+            final String _tmpObjectType;
+            _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
+            final int _tmpDirectionDegrees;
+            _tmpDirectionDegrees = _cursor.getInt(_cursorIndexOfDirectionDegrees);
+            final String _tmpDirectionLabel;
+            _tmpDirectionLabel = _cursor.getString(_cursorIndexOfDirectionLabel);
+            final String _tmpThreatLevel;
+            _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
+            final String _tmpStatus;
+            _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final int _tmpSyncAttempts;
+            _tmpSyncAttempts = _cursor.getInt(_cursorIndexOfSyncAttempts);
+            final Long _tmpLastSyncAttempt;
+            if (_cursor.isNull(_cursorIndexOfLastSyncAttempt)) {
+              _tmpLastSyncAttempt = null;
+            } else {
+              _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
+            }
+            final String _tmpTrackId;
+            if (_cursor.isNull(_cursorIndexOfTrackId)) {
+              _tmpTrackId = null;
+            } else {
+              _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            }
+            _result = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt,_tmpTrackId);
+          } else {
+            _result = null;
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+          _statement.release();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Flow<List<PendingPointEntity>> getTrackPoints(final String trackId) {
+    final String _sql = "SELECT * FROM pending_points WHERE trackId = ? ORDER BY timestamp ASC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindString(_argIndex, trackId);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"pending_points"}, new Callable<List<PendingPointEntity>>() {
+      @Override
+      @NonNull
+      public List<PendingPointEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfLat = CursorUtil.getColumnIndexOrThrow(_cursor, "lat");
+          final int _cursorIndexOfLon = CursorUtil.getColumnIndexOrThrow(_cursor, "lon");
+          final int _cursorIndexOfAccuracy = CursorUtil.getColumnIndexOrThrow(_cursor, "accuracy");
+          final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
+          final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+          final int _cursorIndexOfObjectType = CursorUtil.getColumnIndexOrThrow(_cursor, "objectType");
+          final int _cursorIndexOfDirectionDegrees = CursorUtil.getColumnIndexOrThrow(_cursor, "directionDegrees");
+          final int _cursorIndexOfDirectionLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "directionLabel");
+          final int _cursorIndexOfThreatLevel = CursorUtil.getColumnIndexOrThrow(_cursor, "threatLevel");
+          final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfSyncAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "syncAttempts");
+          final int _cursorIndexOfLastSyncAttempt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastSyncAttempt");
+          final int _cursorIndexOfTrackId = CursorUtil.getColumnIndexOrThrow(_cursor, "trackId");
+          final List<PendingPointEntity> _result = new ArrayList<PendingPointEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final PendingPointEntity _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final double _tmpLat;
+            _tmpLat = _cursor.getDouble(_cursorIndexOfLat);
+            final double _tmpLon;
+            _tmpLon = _cursor.getDouble(_cursorIndexOfLon);
+            final float _tmpAccuracy;
+            _tmpAccuracy = _cursor.getFloat(_cursorIndexOfAccuracy);
+            final String _tmpUserId;
+            _tmpUserId = _cursor.getString(_cursorIndexOfUserId);
+            final long _tmpTimestamp;
+            _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+            final String _tmpObjectType;
+            _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
+            final int _tmpDirectionDegrees;
+            _tmpDirectionDegrees = _cursor.getInt(_cursorIndexOfDirectionDegrees);
+            final String _tmpDirectionLabel;
+            _tmpDirectionLabel = _cursor.getString(_cursorIndexOfDirectionLabel);
+            final String _tmpThreatLevel;
+            _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
+            final String _tmpStatus;
+            _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final int _tmpSyncAttempts;
+            _tmpSyncAttempts = _cursor.getInt(_cursorIndexOfSyncAttempts);
+            final Long _tmpLastSyncAttempt;
+            if (_cursor.isNull(_cursorIndexOfLastSyncAttempt)) {
+              _tmpLastSyncAttempt = null;
+            } else {
+              _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
+            }
+            final String _tmpTrackId;
+            if (_cursor.isNull(_cursorIndexOfTrackId)) {
+              _tmpTrackId = null;
+            } else {
+              _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            }
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt,_tmpTrackId);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<PendingPointEntity>> getShiftHistory(final long since) {
+    final String _sql = "SELECT * FROM pending_points WHERE createdAt > ? ORDER BY createdAt DESC";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    _statement.bindLong(_argIndex, since);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"pending_points"}, new Callable<List<PendingPointEntity>>() {
+      @Override
+      @NonNull
+      public List<PendingPointEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfLat = CursorUtil.getColumnIndexOrThrow(_cursor, "lat");
+          final int _cursorIndexOfLon = CursorUtil.getColumnIndexOrThrow(_cursor, "lon");
+          final int _cursorIndexOfAccuracy = CursorUtil.getColumnIndexOrThrow(_cursor, "accuracy");
+          final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
+          final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+          final int _cursorIndexOfObjectType = CursorUtil.getColumnIndexOrThrow(_cursor, "objectType");
+          final int _cursorIndexOfDirectionDegrees = CursorUtil.getColumnIndexOrThrow(_cursor, "directionDegrees");
+          final int _cursorIndexOfDirectionLabel = CursorUtil.getColumnIndexOrThrow(_cursor, "directionLabel");
+          final int _cursorIndexOfThreatLevel = CursorUtil.getColumnIndexOrThrow(_cursor, "threatLevel");
+          final int _cursorIndexOfStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "status");
+          final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfSyncAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "syncAttempts");
+          final int _cursorIndexOfLastSyncAttempt = CursorUtil.getColumnIndexOrThrow(_cursor, "lastSyncAttempt");
+          final int _cursorIndexOfTrackId = CursorUtil.getColumnIndexOrThrow(_cursor, "trackId");
+          final List<PendingPointEntity> _result = new ArrayList<PendingPointEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final PendingPointEntity _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final double _tmpLat;
+            _tmpLat = _cursor.getDouble(_cursorIndexOfLat);
+            final double _tmpLon;
+            _tmpLon = _cursor.getDouble(_cursorIndexOfLon);
+            final float _tmpAccuracy;
+            _tmpAccuracy = _cursor.getFloat(_cursorIndexOfAccuracy);
+            final String _tmpUserId;
+            _tmpUserId = _cursor.getString(_cursorIndexOfUserId);
+            final long _tmpTimestamp;
+            _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+            final String _tmpObjectType;
+            _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
+            final int _tmpDirectionDegrees;
+            _tmpDirectionDegrees = _cursor.getInt(_cursorIndexOfDirectionDegrees);
+            final String _tmpDirectionLabel;
+            _tmpDirectionLabel = _cursor.getString(_cursorIndexOfDirectionLabel);
+            final String _tmpThreatLevel;
+            _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
+            final String _tmpStatus;
+            _tmpStatus = _cursor.getString(_cursorIndexOfStatus);
+            final long _tmpCreatedAt;
+            _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final int _tmpSyncAttempts;
+            _tmpSyncAttempts = _cursor.getInt(_cursorIndexOfSyncAttempts);
+            final Long _tmpLastSyncAttempt;
+            if (_cursor.isNull(_cursorIndexOfLastSyncAttempt)) {
+              _tmpLastSyncAttempt = null;
+            } else {
+              _tmpLastSyncAttempt = _cursor.getLong(_cursorIndexOfLastSyncAttempt);
+            }
+            final String _tmpTrackId;
+            if (_cursor.isNull(_cursorIndexOfTrackId)) {
+              _tmpTrackId = null;
+            } else {
+              _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            }
+            _item = new PendingPointEntity(_tmpId,_tmpLat,_tmpLon,_tmpAccuracy,_tmpUserId,_tmpTimestamp,_tmpObjectType,_tmpDirectionDegrees,_tmpDirectionLabel,_tmpThreatLevel,_tmpStatus,_tmpCreatedAt,_tmpSyncAttempts,_tmpLastSyncAttempt,_tmpTrackId);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<TrackSummary>> getAllTracks() {
+    final String _sql = "\n"
+            + "        SELECT\n"
+            + "            trackId AS trackId,\n"
+            + "            objectType AS objectType,\n"
+            + "            (SELECT p2.threatLevel FROM pending_points p2\n"
+            + "             WHERE p2.trackId = p1.trackId\n"
+            + "             ORDER BY CASE p2.threatLevel\n"
+            + "                 WHEN 'THREAT' THEN 3\n"
+            + "                 WHEN 'ATTENTION' THEN 2\n"
+            + "                 WHEN 'OBSERVATION' THEN 1\n"
+            + "                 ELSE 0\n"
+            + "             END DESC\n"
+            + "             LIMIT 1) AS threatLevel,\n"
+            + "            COUNT(*) AS pointCount,\n"
+            + "            MIN(timestamp) AS startTime,\n"
+            + "            MAX(timestamp) AS endTime\n"
+            + "        FROM pending_points p1\n"
+            + "        WHERE trackId IS NOT NULL\n"
+            + "        GROUP BY trackId\n"
+            + "        ORDER BY startTime DESC\n"
+            + "        ";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"pending_points"}, new Callable<List<TrackSummary>>() {
+      @Override
+      @NonNull
+      public List<TrackSummary> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfTrackId = 0;
+          final int _cursorIndexOfObjectType = 1;
+          final int _cursorIndexOfThreatLevel = 2;
+          final int _cursorIndexOfPointCount = 3;
+          final int _cursorIndexOfStartTime = 4;
+          final int _cursorIndexOfEndTime = 5;
+          final List<TrackSummary> _result = new ArrayList<TrackSummary>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final TrackSummary _item;
+            final String _tmpTrackId;
+            _tmpTrackId = _cursor.getString(_cursorIndexOfTrackId);
+            final String _tmpObjectType;
+            _tmpObjectType = _cursor.getString(_cursorIndexOfObjectType);
+            final String _tmpThreatLevel;
+            _tmpThreatLevel = _cursor.getString(_cursorIndexOfThreatLevel);
+            final int _tmpPointCount;
+            _tmpPointCount = _cursor.getInt(_cursorIndexOfPointCount);
+            final long _tmpStartTime;
+            _tmpStartTime = _cursor.getLong(_cursorIndexOfStartTime);
+            final long _tmpEndTime;
+            _tmpEndTime = _cursor.getLong(_cursorIndexOfEndTime);
+            _item = new TrackSummary(_tmpTrackId,_tmpObjectType,_tmpThreatLevel,_tmpPointCount,_tmpStartTime,_tmpEndTime);
             _result.add(_item);
           }
           return _result;
