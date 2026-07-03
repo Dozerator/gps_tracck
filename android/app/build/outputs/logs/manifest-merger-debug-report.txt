@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-51:12
-INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-51:12
-INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-51:12
-INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-51:12
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-52:12
+INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-52:12
+INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-52:12
+INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:2:1-52:12
 MERGED from [androidx.databinding:viewbinding:8.4.2] C:\Users\obi\.gradle\caches\transforms-4\ab94f89ad80c12d39fe65037c4f914fe\transformed\viewbinding-8.4.2\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\obi\.gradle\caches\transforms-4\024522bb6ad38c544941f191cb4d0f2a\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\obi\.gradle\caches\transforms-4\f88f68ef2a0d299399c98ef67867b3f7\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
@@ -111,15 +111,19 @@ uses-permission#android.permission.POST_NOTIFICATIONS
 ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:12:5-77
 	android:name
 		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:12:22-74
-uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:13:5-14:31
-	tools:node
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:14:9-28
+uses-permission#android.permission.VIBRATE
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:13:5-66
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:13:22-78
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:13:22-63
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:14:5-15:31
+	tools:node
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:15:9-28
+	android:name
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:14:22-78
 application
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:16:5-49:19
-INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:16:5-49:19
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:17:5-50:19
+INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:17:5-50:19
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\obi\.gradle\caches\transforms-4\024522bb6ad38c544941f191cb4d0f2a\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\obi\.gradle\caches\transforms-4\024522bb6ad38c544941f191cb4d0f2a\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\obi\.gradle\caches\transforms-4\f88f68ef2a0d299399c98ef67867b3f7\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -153,59 +157,59 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\obi\.gradle\caches
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.1] C:\Users\obi\.gradle\caches\transforms-4\7a3f4104257706e5eb34693c1fba5abf\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:22:9-35
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:23:9-35
 	android:label
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:20:9-41
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:21:9-41
 	android:roundIcon
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:21:9-54
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:22:9-54
 	android:icon
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:19:9-43
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:20:9-43
 	android:allowBackup
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:18:9-35
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:19:9-35
 	android:theme
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:24:9-46
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:25:9-46
 	android:networkSecurityConfig
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:23:9-69
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:24:9-69
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:17:9-36
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:18:9-36
 activity#com.example.operator.ui.LoginActivity
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:26:9-34:20
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:27:9-35:20
 	android:exported
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:28:13-36
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:29:13-36
 	android:theme
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:29:13-50
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:30:13-50
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:27:13-45
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:28:13-45
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:30:13-33:29
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:31:13-34:29
 action#android.intent.action.MAIN
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:31:17-69
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:32:17-69
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:31:25-66
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:32:25-66
 category#android.intent.category.LAUNCHER
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:32:17-77
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:33:17-77
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:32:27-74
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:33:27-74
 activity#com.example.operator.ui.MainActivity
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:36:9-38:40
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:37:9-39:40
 	android:exported
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:38:13-37
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:39:13-37
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:37:13-44
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:38:13-44
 activity#com.example.operator.ui.QueueActivity
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:40:9-42:40
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:41:9-43:40
 	android:exported
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:42:13-37
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:43:13-37
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:41:13-45
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:42:13-45
 service#com.example.operator.service.LocationService
-ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:44:9-47:40
+ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:45:9-48:40
 	android:exported
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:47:13-37
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:48:13-37
 	android:foregroundServiceType
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:46:13-53
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:47:13-53
 	android:name
-		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:45:13-52
+		ADDED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml:46:13-52
 uses-sdk
 INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Work\Cowork\Develop\Operator\android\app\src\main\AndroidManifest.xml

@@ -32,6 +32,7 @@ import com.example.operator.model.Direction
 import com.example.operator.model.ObjectType
 import com.example.operator.model.ThreatLevel
 import com.example.operator.service.LocationService
+import com.example.operator.utils.VibrationManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -348,6 +349,7 @@ class MainActivity : AppCompatActivity() {
 
         dialogBinding.confirmSendButton.setOnClickListener {
             dialog.dismiss()
+            VibrationManager.vibrate(this, threatLevel.apiValue)
             sendLocationPoint(location, objectType, direction, threatLevel)
         }
         dialogBinding.confirmCancelButton.setOnClickListener {
