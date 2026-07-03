@@ -17,31 +17,32 @@
         android:textColor="@color/accent_orange"
         android:textSize="14sp" />
 
-    <!-- Быстрые кнопки сторон света — снэп с анимацией 300мс -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="12dp">
+    <!-- Быстрые кнопки сторон света — крестообразный D-pad, снэп с анимацией 300мс.
+         N/S закреплены по верху/низу и центрированы по горизонтали; W/E закреплены
+         по краям и центрированы по вертикали между N и S — равные отступы, ромб. -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="176dp"
+        android:layout_height="176dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp">
 
         <LinearLayout
             android:id="@+id/btnN"
-            android:layout_width="56dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_quick_dir_button"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:duplicateParentState="true"
                 android:rotation="0"
                 android:src="@drawable/ic_arrow_up"
                 android:tint="@color/quick_dir_content_color" />
@@ -49,88 +50,30 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:duplicateParentState="true"
                 android:text="N"
                 android:textColor="@color/quick_dir_content_color"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnE"
-            android:layout_width="56dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_quick_dir_button"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:rotation="90"
-                android:src="@drawable/ic_arrow_up"
-                android:tint="@color/quick_dir_content_color" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="E"
-                android:textColor="@color/quick_dir_content_color"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnS"
-            android:layout_width="56dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_quick_dir_button"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
-                android:rotation="180"
-                android:src="@drawable/ic_arrow_up"
-                android:tint="@color/quick_dir_content_color" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="S"
-                android:textColor="@color/quick_dir_content_color"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btnW"
-            android:layout_width="56dp"
-            android:layout_height="44dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_quick_dir_button"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginEnd="4dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:duplicateParentState="true"
                 android:rotation="270"
                 android:src="@drawable/ic_arrow_up"
                 android:tint="@color/quick_dir_content_color" />
@@ -138,20 +81,85 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:duplicateParentState="true"
                 android:text="W"
                 android:textColor="@color/quick_dir_content_color"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/btnE"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_quick_dir_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Компас: направление задаётся только вращением пальцем -->
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:duplicateParentState="true"
+                android:rotation="90"
+                android:src="@drawable/ic_arrow_up"
+                android:tint="@color/quick_dir_content_color" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:duplicateParentState="true"
+                android:text="E"
+                android:textColor="@color/quick_dir_content_color"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnS"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_quick_dir_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:duplicateParentState="true"
+                android:rotation="180"
+                android:src="@drawable/ic_arrow_up"
+                android:tint="@color/quick_dir_content_color" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:duplicateParentState="true"
+                android:text="S"
+                android:textColor="@color/quick_dir_content_color"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Компас: направление задаётся только вращением пальцем. Небольшой отрицательный
+         отступ визуально связывает его с ромбом кнопок над ним. -->
     <com.example.operator.ui.CompassView
         android:id="@+id/compassView"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:layout_gravity="center" />
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="-8dp" />
 
     <TextView
         android:id="@+id/tvAngle"

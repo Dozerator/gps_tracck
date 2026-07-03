@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="#FFFFFF" android:state_pressed="true" />
+    <!-- Заливка активная (выбрано или нажато) — инвертированный стиль: тёмный текст/иконка. -->
+    <item android:color="@color/dialog_background" android:state_selected="true" />
+    <item android:color="@color/dialog_background" android:state_pressed="true" />
     <item android:color="@color/accent_orange" />
 </selector>

@@ -246,11 +246,13 @@ class MainActivity : AppCompatActivity() {
         dialogBinding.compassView.angleDegrees = initialDegrees.toFloat()
         dialogBinding.tvAngle.text = getString(R.string.compass_degrees_format, initialDegrees)
         dialogBinding.tvDirectionLabel.text = directionLabel(initialDegrees)
+        updateCompassQuickButtonsSelection(dialogBinding, initialDegrees)
 
         dialogBinding.compassView.onAngleChanged = { angle ->
             val degrees = angle.toInt()
             dialogBinding.tvAngle.text = getString(R.string.compass_degrees_format, degrees)
             dialogBinding.tvDirectionLabel.text = directionLabel(degrees)
+            updateCompassQuickButtonsSelection(dialogBinding, degrees)
         }
 
         dialogBinding.btnN.setOnClickListener { dialogBinding.compassView.setAngleAnimated(0f) }
@@ -278,6 +280,15 @@ class MainActivity : AppCompatActivity() {
             cancelMarking()
         }
         dialog.show()
+    }
+
+    // Подсвечивает кнопку ромба, совпадающую с текущим углом (заливка + инвертированный цвет
+    // текста/иконки — как активное деление на самом круге компаса); остальные — обычный стиль.
+    private fun updateCompassQuickButtonsSelection(dialogBinding: DialogCompassBinding, degrees: Int) {
+        dialogBinding.btnN.isSelected = degrees == 0
+        dialogBinding.btnE.isSelected = degrees == 90
+        dialogBinding.btnS.isSelected = degrees == 180
+        dialogBinding.btnW.isSelected = degrees == 270
     }
 
     // Шаг 3: оценка уровня угрозы.
