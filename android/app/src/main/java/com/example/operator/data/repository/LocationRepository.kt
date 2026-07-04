@@ -39,6 +39,9 @@ class LocationRepository(
 
     fun getAllTracks(): Flow<List<TrackSummary>> = dao.getAllTracks()
 
+    /** Очистить синхронизированную историю (экран истории), не трогая PENDING/FAILED. */
+    suspend fun clearSyncedHistory() = dao.clearAllSynced()
+
     suspend fun sendPoint(
         lat: Double,
         lon: Double,

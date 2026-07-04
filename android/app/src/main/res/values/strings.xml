@@ -66,6 +66,18 @@
     <string name="history_direction_time_format">%1$s | %2$s</string>
     <string name="history_user_format">👤 %1$s</string>
 
+    <string name="history_export_dialog_title">Экспорт данных смены</string>
+    <string name="history_export_option_geojson">🗺 GeoJSON → TrueConf / Telegram</string>
+    <string name="history_export_option_csv">📊 CSV → Excel / Telegram</string>
+    <string name="history_export_option_sync">📡 Синхронизировать сейчас</string>
+    <string name="history_export_option_clear">🗑 Очистить синхронизированную историю</string>
+    <string name="history_export_empty">Нет точек для экспорта</string>
+    <string name="history_sync_started">Синхронизация запущена</string>
+    <string name="history_clear_confirm_title">Очистить историю?</string>
+    <string name="history_clear_confirm_message">Будут удалены только уже отправленные на сервер точки. Неотправленные останутся в очереди.</string>
+    <string name="history_clear_confirm_button">Очистить</string>
+    <string name="history_cleared">Синхронизированная история очищена</string>
+
     <string name="track_object_format">%1$s %2$s — %3$d точки</string>
     <string name="track_time_range_format">%1$s → %2$s</string>
 </resources>

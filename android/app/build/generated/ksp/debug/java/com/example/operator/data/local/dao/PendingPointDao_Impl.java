@@ -46,6 +46,8 @@ public final class PendingPointDao_Impl implements PendingPointDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteSyncedOlderThan;
 
+  private final SharedSQLiteStatement __preparedStmtOfClearAllSynced;
+
   public PendingPointDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfPendingPointEntity = new EntityInsertionAdapter<PendingPointEntity>(__db) {
@@ -118,6 +120,14 @@ public final class PendingPointDao_Impl implements PendingPointDao {
       @NonNull
       public String createQuery() {
         final String _query = "DELETE FROM pending_points WHERE status = 'SYNCED' AND createdAt < ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfClearAllSynced = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM pending_points WHERE status = 'SYNCED'";
         return _query;
       }
     };
@@ -241,6 +251,29 @@ public final class PendingPointDao_Impl implements PendingPointDao {
           }
         } finally {
           __preparedStmtOfDeleteSyncedOlderThan.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object clearAllSynced(final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfClearAllSynced.acquire();
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfClearAllSynced.release(_stmt);
         }
       }
     }, $completion);

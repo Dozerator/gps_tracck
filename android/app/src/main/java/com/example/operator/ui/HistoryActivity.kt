@@ -1,21 +1,23 @@
 package com.example.operator.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.operator.BuildConfig
 import com.example.operator.OperatorApp
 import com.example.operator.R
 import com.example.operator.data.local.entity.PendingPointEntity
 import com.example.operator.databinding.ActivityHistoryBinding
+import com.example.operator.export.ExportManager
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -30,6 +32,8 @@ class HistoryActivity : AppCompatActivity() {
     private var currentTab = 0 // 0 = точки, 1 = треки
     private var lastPoints: List<PendingPointEntity> = emptyList()
 
+    private val repository by lazy { (application as OperatorApp).locationRepository }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
@@ -39,7 +43,7 @@ class HistoryActivity : AppCompatActivity() {
         binding.rvHistory.adapter = pointAdapter
 
         binding.btnBack.setOnClickListener { finish() }
-        binding.btnExport.setOnClickListener { exportHistory() }
+        binding.btnExport.setOnClickListener { showExportDialog() }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -51,7 +55,6 @@ class HistoryActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab) = Unit
         })
 
-        val repository = (application as OperatorApp).locationRepository
         val since = System.currentTimeMillis() - SHIFT_WINDOW_MS
 
         lifecycleScope.launch {
@@ -92,13 +95,54 @@ class HistoryActivity : AppCompatActivity() {
         )
     }
 
-    private fun exportHistory() {
-        if (lastPoints.isEmpty()) return
+    private fun showExportDialog() {
+        val options = arrayOf(
+            getString(R.string.history_export_option_geojson),
+            getString(R.string.history_export_option_csv),
+            getString(R.string.history_export_option_sync),
+            getString(R.string.history_export_option_clear)
+        )
+        AlertDialog.Builder(this)
+            .setTitle(R.string.history_export_dialog_title)
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> exportGeoJsonAndShare()
+                    1 -> exportCsvAndShare()
+                    2 -> triggerServerSync()
+                    3 -> confirmClearSyncedHistory()
+                }
+            }
+            .setNegativeButton(R.string.cancel_button, null)
+            .show()
+    }
 
+    private fun exportGeoJsonAndShare() {
+        if (lastPoints.isEmpty()) {
+            Toast.makeText(this, R.string.history_export_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            val file = withContext(Dispatchers.IO) { ExportManager.exportToGeoJson(this@HistoryActivity, lastPoints) }
+            ExportManager.shareFile(this@HistoryActivity, file, "application/geo+json")
+        }
+    }
+
+    private fun exportCsvAndShare() {
+        if (lastPoints.isEmpty()) {
+            Toast.makeText(this, R.string.history_export_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            val file = withContext(Dispatchers.IO) { buildCsvFile(lastPoints) }
+            ExportManager.shareFile(this@HistoryActivity, file, "text/csv")
+        }
+    }
+
+    private fun buildCsvFile(points: List<PendingPointEntity>): File {
         val csv = buildString {
             appendLine("timestamp,object_type,direction_degrees,direction_label,threat_level,lat,lon,status,track_id")
             val rowFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-            lastPoints.forEach { p ->
+            points.forEach { p ->
                 appendLine(
                     listOf(
                         rowFormat.format(java.util.Date(p.timestamp)),
@@ -115,17 +159,28 @@ class HistoryActivity : AppCompatActivity() {
             }
         }
 
-        val exportDir = File(cacheDir, "exports").apply { mkdirs() }
-        val file = File(exportDir, "operator_history_${System.currentTimeMillis()}.csv")
-        file.writeText(csv)
+        val file = File(ExportManager.exportDir(this), "operator_history_${ExportManager.fileTimestamp()}.csv")
+        file.writeText("﻿" + csv) // UTF-8 BOM — чтобы Excel не путал кодировку
+        return file
+    }
 
-        val uri = FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.fileprovider", file)
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/csv"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivity(Intent.createChooser(shareIntent, getString(R.string.history_export_button)))
+    private fun triggerServerSync() {
+        repository.triggerSync()
+        Toast.makeText(this, R.string.history_sync_started, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun confirmClearSyncedHistory() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.history_clear_confirm_title)
+            .setMessage(R.string.history_clear_confirm_message)
+            .setPositiveButton(R.string.history_clear_confirm_button) { _, _ ->
+                lifecycleScope.launch {
+                    repository.clearSyncedHistory()
+                    Toast.makeText(this@HistoryActivity, R.string.history_cleared, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(R.string.cancel_button, null)
+            .show()
     }
 
     companion object {

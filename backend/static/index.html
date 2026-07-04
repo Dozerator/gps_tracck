@@ -159,6 +159,51 @@
   #btn-test { font-size: 12px; }
   #btn-reset { font-size: 12px; color: #FF6B00; }
   #volume-slider { width: 100px; accent-color: #FF6B00; }
+
+  /* --- Экспорт данных смены (GeoJSON/KMZ/CSV) --- */
+  #export-btn {
+    position: fixed;
+    bottom: 20px; left: 20px;
+    z-index: 9999;
+    background: #1C1C1E; color: #fff; border: none; border-radius: 12px;
+    padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  #export-btn:hover { background: #2C2C2E; }
+
+  #export-panel {
+    position: fixed;
+    left: 20px; bottom: 76px;
+    z-index: 9999;
+    width: 300px;
+    background: #1C1C1E; color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    display: none;
+  }
+  #export-panel.open { display: block; }
+  #export-panel h3 { margin: 0 0 12px 0; font-size: 14px; }
+  #export-panel .export-row { margin-bottom: 10px; }
+  #export-panel label { display: block; font-size: 11px; color: #999; margin-bottom: 4px; }
+  #export-panel select {
+    width: 100%; background: #2C2C2E; color: #fff; border: none; border-radius: 6px;
+    padding: 7px 8px; font-size: 13px;
+  }
+  #export-stats-preview {
+    background: #2C2C2E; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px;
+    font-size: 12px; line-height: 1.6; color: #ccc;
+  }
+  #export-stats-preview .stat-line { display: flex; justify-content: space-between; }
+  .export-format-buttons { display: flex; gap: 6px; }
+  .export-format-buttons button {
+    flex: 1; border: none; border-radius: 8px; padding: 9px 4px; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: #fff;
+  }
+  .export-format-buttons button:disabled { opacity: 0.5; cursor: default; }
+  #export-geojson-btn { background: #1565C0; }
+  #export-kmz-btn { background: #2E7D32; }
+  #export-csv-btn { background: #6A1B9A; }
 </style>
 </head>
 <body>
@@ -202,10 +247,44 @@
   <button id="btn-reset">СБРОС</button>
 </div>
 
+<button id="export-btn">⬇ ЭКСПОРТ</button>
+<div id="export-panel">
+  <h3>Экспорт данных смены</h3>
+
+  <div class="export-row">
+    <label for="export-hours">Период</label>
+    <select id="export-hours">
+      <option value="6">6 часов</option>
+      <option value="12" selected>12 часов</option>
+      <option value="24">24 часа</option>
+      <option value="72">72 часа</option>
+    </select>
+  </div>
+
+  <div class="export-row">
+    <label for="export-threat">Уровень угрозы</label>
+    <select id="export-threat">
+      <option value="">Все уровни</option>
+      <option value="OBSERVATION">🟢 Наблюдение</option>
+      <option value="ATTENTION">🟡 Внимание</option>
+      <option value="THREAT">🔴 Угроза</option>
+    </select>
+  </div>
+
+  <div id="export-stats-preview">Загрузка статистики…</div>
+
+  <div class="export-format-buttons">
+    <button id="export-geojson-btn">GeoJSON</button>
+    <button id="export-kmz-btn">KMZ</button>
+    <button id="export-csv-btn">CSV</button>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/static/sounds/AudioManager.js"></script>
 <script src="/static/alerts/AlertManager.js"></script>
 <script src="/static/tracks/TrackManager.js"></script>
+<script src="/static/export/ExportManager.js"></script>
 <script>
   const map = L.map('map').setView([55.7558, 37.6173], 11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -562,7 +641,10 @@
 
   resetBtn.addEventListener('click', () => alertManager.clearAll());
 
-  // Прогон всех трёх уровней подряд — удобно проверить звук/цвет сразу после деплоя.
+  // Прогон всех трёх уровней подряд — удобно проверить звук/цвет/маркер сразу после
+  // деплоя. Вызывает полноценный handleNewPoint() (не только alertManager), чтобы
+  // TEST реально клал маркер на карту — иначе кнопка проверяла только звук/toast/flash,
+  // и казалось, что иконки объектов не отрисовываются.
   async function testAlerts() {
     const testData = {
       object_type: 'UAV',
@@ -574,13 +656,15 @@
       timestamp: new Date().toISOString()
     };
 
-    alertManager.handleNewPoint({ ...testData, threat_level: 'OBSERVATION' });
+    // Небольшое смещение по широте на каждый шаг — иначе все 3 тестовых маркера
+    // легли бы в одну точку и перекрывали друг друга.
+    handleNewPoint({ ...testData, lat: testData.lat + 0.006, threat_level: 'OBSERVATION' });
     await new Promise((r) => setTimeout(r, 2000));
 
-    alertManager.handleNewPoint({ ...testData, threat_level: 'ATTENTION' });
+    handleNewPoint({ ...testData, lat: testData.lat + 0.003, threat_level: 'ATTENTION' });
     await new Promise((r) => setTimeout(r, 2000));
 
-    alertManager.handleNewPoint({ ...testData, threat_level: 'THREAT' });
+    handleNewPoint({ ...testData, threat_level: 'THREAT' });
   }
 
   testBtn.addEventListener('click', () => testAlerts());

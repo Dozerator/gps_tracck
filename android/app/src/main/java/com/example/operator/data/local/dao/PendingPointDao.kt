@@ -50,6 +50,10 @@ interface PendingPointDao {
     @Query("DELETE FROM pending_points WHERE status = 'SYNCED' AND createdAt < :olderThan")
     suspend fun deleteSyncedOlderThan(olderThan: Long)
 
+    /** Очистка истории вручную (экран истории): удаляет только SYNCED, PENDING/FAILED сохраняются. */
+    @Query("DELETE FROM pending_points WHERE status = 'SYNCED'")
+    suspend fun clearAllSynced()
+
     /** Последняя известная точка пользователя по типу объекта — для решения, продолжается ли трек. */
     @Query(
         """

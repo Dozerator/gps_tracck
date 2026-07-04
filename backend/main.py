@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from config import settings
 from database import Base, engine
 from routers import auth as auth_router
+from routers import export as export_router
 from routers import location as location_router
 from routers import tracks as tracks_router
 from websocket_manager import manager
@@ -27,6 +28,7 @@ app.add_middleware(
 app.include_router(auth_router.router)
 app.include_router(location_router.router)
 app.include_router(tracks_router.router)
+app.include_router(export_router.router)
 
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
